@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Pilot Flight Logbook - Single file app with comprehensive flight tracking, student/instructor management, and reporting features",
+  "architectural_notes": [
+    "Single-file application architecture",
+    "CSV-based data persistence for flight logs and reference data",
+    "Auto-calculation of total flight hours from takeoff/landing times"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-frontend-form-to-add-new-students-instructors-aircraft-and-exercises-with-separate-add-buttons-dialogs-for-each-entity-type",
+      "title": "Create frontend form to add new Students, Instructors, Aircraft, and Exercises with separate add buttons/dialogs for each entity type",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-frontend-flight-log-entry-form-with-date-field-auto-populated-with-today-s-date-and-calendar-picker-for-manual-change-dropdown-selectors-for-student-instructor-aircraft-and-exercise-populated-from-backend-toggle-for-solo-dual-flight-type-toggle-for-day-night-landing-type-numeric-input-for-landing-count-time-inputs-for-takeoff-and-landing-times-hh-mm-format-auto-calculated-and-displayed-total-hours-and-submit-button",
+      "title": "Create frontend flight log entry form with: date field auto-populated with today's date and calendar picker for manual change, dropdown selectors for Student, Instructor, Aircraft, and Exercise populated from backend, toggle for Solo/Dual flight type, toggle for Day/Night landing type, numeric input for landing count, time inputs for takeoff and landing times (HH:MM format), auto-calculated and displayed total hours, and submit button",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-frontend-table-list-view-to-display-all-flight-log-entries-with-columns-date-student-instructor-aircraft-exercise-flight-type-landing-type-landing-count-takeoff-time-landing-time-total-hours-and-action-buttons-for-edit-and-delete-on-each-row",
+      "title": "Create frontend table/list view to display all flight log entries with columns: Date, Student, Instructor, Aircraft, Exercise, Flight Type, Landing Type, Landing Count, Takeoff Time, Landing Time, Total Hours, and action buttons for Edit and Delete on each row",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-frontend-edit-functionality-clicking-edit-on-a-flight-log-entry-opens-the-entry-form-pre-filled-with-existing-data-allows-modification-of-all-fields-and-saves-changes-to-backend-on-submit",
+      "title": "Implement frontend edit functionality: clicking Edit on a flight log entry opens the entry form pre-filled with existing data, allows modification of all fields, and saves changes to backend on submit",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-frontend-delete-functionality-clicking-delete-on-a-flight-log-entry-shows-confirmation-dialog-and-on-confirmation-calls-backend-delete-method-and-refreshes-the-table",
+      "title": "Implement frontend delete functionality: clicking Delete on a flight log entry shows confirmation dialog, and on confirmation calls backend delete method and refreshes the table",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-frontend-reporting-views-student-wise-report-showing-each-student-s-name-and-total-flight-hours-and-instructor-wise-report-showing-each-instructor-s-name-total-flight-hours-and-number-of-flights",
+      "title": "Create frontend reporting views: Student-wise report showing each student's name and total flight hours, and Instructor-wise report showing each instructor's name, total flight hours, and number of flights",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-frontend-export-to-excel-button-that-calls-backend-csv-export-method-and-triggers-browser-download-of-the-csv-file-with-flight-log-data",
+      "title": "Implement frontend Export to Excel button that calls backend CSV export method and triggers browser download of the CSV file with flight log data",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Date selection with auto-default to today and calendar picker",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Student, Instructor, Aircraft, and Exercise dropdowns with add functionality",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Solo/Dual toggle and Day/Night landing tracking",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Landing count, takeoff/landing time tracking with auto-calculated total hours",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Submit, Read, Edit, and Delete flight log entries",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Student-wise and Instructor-wise reporting with total hours",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Export to Excel functionality",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "CSV backend for data storage",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Create backend data models for Student (with name field), Instructor (with name field), Aircraft (with registration/tail number field), and Exercise (with name/description field)",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Create backend FlightLog data model with fields: date (Text), studentId (Text), instructorId (Text), aircraftId (Text), exerciseId (Text), flightType (\"Solo\" or \"Dual\"), landingType (\"Day\" or \"Night\"), landingCount (Nat), takeoffTime (Text in HH:MM format), landingTime (Text in HH:MM format), totalHours (Float)",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Implement backend CRUD operations for Students, Instructors, Aircraft, and Exercises (create, read all, update, delete)",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Implement backend CRUD operations for FlightLog entries (create, read all, update, delete) with automatic total hours calculation from takeoff and landing times",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Implement backend reporting methods: getStudentTotalHours(studentId) returning total flight hours for a student, and getInstructorReport(instructorId) returning total hours and flight count for an instructor",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Implement backend method to export all flight log data as CSV format, returning text content with headers: Date, Student, Instructor, Aircraft, Exercise, Flight Type, Landing Type, Landing Count, Takeoff Time, Landing Time, Total Hours",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Pilot Flight Logbook",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

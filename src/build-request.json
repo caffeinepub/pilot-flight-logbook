@@ -1,0 +1,312 @@
+{
+  "kind": "build_request",
+  "title": "Build pilot flight logbook with comprehensive tracking and reporting",
+  "projectName": "Pilot Flight Logbook",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Create backend data models for Student (with name field), Instructor (with name field), Aircraft (with registration/tail number field), and Exercise (with name/description field)",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "👨‍🎓 Student dropdown",
+          "👨‍✈️ Instructor dropdown",
+          "✈️ Aircraft dropdown",
+          "📘 Exercise dropdown"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend stores and retrieves Students with unique IDs and names",
+        "Backend stores and retrieves Instructors with unique IDs and names",
+        "Backend stores and retrieves Aircraft with unique IDs and registration numbers",
+        "Backend stores and retrieves Exercises with unique IDs and names"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Create backend FlightLog data model with fields: date (Text), studentId (Text), instructorId (Text), aircraftId (Text), exerciseId (Text), flightType (\"Solo\" or \"Dual\"), landingType (\"Day\" or \"Night\"), landingCount (Nat), takeoffTime (Text in HH:MM format), landingTime (Text in HH:MM format), totalHours (Float)",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "🧑‍✈️ Solo / Dual",
+          "🌙 Day / Night landing",
+          "🛬 Landing count",
+          "⏱ Takeoff & Landing time",
+          "📊 Auto total hours"
+        ]
+      },
+      "acceptanceCriteria": [
+        "FlightLog entries can be created with all specified fields",
+        "FlightLog entries include date, student, instructor, aircraft, and exercise references",
+        "FlightLog captures flight type (Solo/Dual), landing type (Day/Night), landing count, and times",
+        "TotalHours is calculated from takeoff and landing times"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Implement backend CRUD operations for Students, Instructors, Aircraft, and Exercises (create, read all, update, delete)",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "➕ Separate Add Student / Instructor / Aircraft / Exercise",
+          "✏️ Edit (WORKING)",
+          "Delete (WORKING)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend provides methods to add new Student, Instructor, Aircraft, and Exercise entries",
+        "Backend provides methods to retrieve all entries for each entity type",
+        "Backend provides methods to update existing entries",
+        "Backend provides methods to delete entries by ID"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Implement backend CRUD operations for FlightLog entries (create, read all, update, delete) with automatic total hours calculation from takeoff and landing times",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "✅ Submit",
+          "📖 Read",
+          "✏️ Edit (WORKING)",
+          "Delete (WORKING)",
+          "📊 Auto total hours"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend calculates total hours automatically when creating or updating flight logs",
+        "Backend provides method to create new flight log entries",
+        "Backend provides method to retrieve all flight log entries",
+        "Backend provides method to update existing flight log entries",
+        "Backend provides method to delete flight log entries by ID"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Implement backend reporting methods: getStudentTotalHours(studentId) returning total flight hours for a student, and getInstructorReport(instructorId) returning total hours and flight count for an instructor",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "📊 Student-wise total hours",
+          "📊 Instructor-wise report"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend method returns sum of all flight hours for a given student ID",
+        "Backend method returns sum of all flight hours and count of flights for a given instructor ID",
+        "Reports aggregate data accurately from all flight log entries"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Implement backend method to export all flight log data as CSV format, returning text content with headers: Date, Student, Instructor, Aircraft, Exercise, Flight Type, Landing Type, Landing Count, Takeoff Time, Landing Time, Total Hours",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "📤 Export to Excel",
+          "💾 CSV backend"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend method returns CSV-formatted text with all flight log data",
+        "CSV includes header row with all field names",
+        "CSV resolves foreign key references to show names instead of IDs",
+        "CSV data is properly escaped and formatted"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Create frontend form to add new Students, Instructors, Aircraft, and Exercises with separate add buttons/dialogs for each entity type",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "➕ Separate Add Student / Instructor / Aircraft / Exercise"
+        ]
+      },
+      "acceptanceCriteria": [
+        "UI provides separate controls to add Students with name input",
+        "UI provides separate controls to add Instructors with name input",
+        "UI provides separate controls to add Aircraft with registration input",
+        "UI provides separate controls to add Exercises with name/description input",
+        "Each add form validates input and calls backend create methods"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Create frontend flight log entry form with: date field auto-populated with today's date and calendar picker for manual change, dropdown selectors for Student, Instructor, Aircraft, and Exercise populated from backend, toggle for Solo/Dual flight type, toggle for Day/Night landing type, numeric input for landing count, time inputs for takeoff and landing times (HH:MM format), auto-calculated and displayed total hours, and submit button",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "✔ Date auto-selected (today)",
+          "📅 Calendar date picker (manual change allowed)",
+          "👨‍🎓 Student dropdown",
+          "👨‍✈️ Instructor dropdown",
+          "✈️ Aircraft dropdown",
+          "📘 Exercise dropdown",
+          "🧑‍✈️ Solo / Dual",
+          "🌙 Day / Night landing",
+          "🛬 Landing count",
+          "⏱ Takeoff & Landing time",
+          "📊 Auto total hours",
+          "✅ Submit"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Date field defaults to current date on form load",
+        "Date can be changed via calendar picker UI component",
+        "All dropdowns populate from backend data (Students, Instructors, Aircraft, Exercises)",
+        "Flight type toggle switches between Solo and Dual",
+        "Landing type toggle switches between Day and Night",
+        "Landing count accepts positive integers",
+        "Takeoff and landing time inputs accept HH:MM format",
+        "Total hours displays automatically calculated value as times are entered",
+        "Submit button calls backend to create new flight log entry"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Create frontend table/list view to display all flight log entries with columns: Date, Student, Instructor, Aircraft, Exercise, Flight Type, Landing Type, Landing Count, Takeoff Time, Landing Time, Total Hours, and action buttons for Edit and Delete on each row",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "📖 Read",
+          "✏️ Edit (WORKING)",
+          "Delete (WORKING)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Table displays all flight log entries retrieved from backend",
+        "Each row shows all flight log fields with resolved names (not IDs)",
+        "Edit button on each row opens form pre-populated with entry data",
+        "Delete button on each row removes the entry after confirmation",
+        "Table updates automatically after create, edit, or delete operations"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Implement frontend edit functionality: clicking Edit on a flight log entry opens the entry form pre-filled with existing data, allows modification of all fields, and saves changes to backend on submit",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "✏️ Edit (WORKING)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Edit button populates form with all existing entry data",
+        "All fields (date, dropdowns, toggles, times, counts) are editable",
+        "Submit in edit mode calls backend update method",
+        "Table refreshes with updated data after successful edit",
+        "Form can be cancelled to discard changes"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Implement frontend delete functionality: clicking Delete on a flight log entry shows confirmation dialog, and on confirmation calls backend delete method and refreshes the table",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Delete (WORKING)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Delete button shows confirmation dialog before deletion",
+        "Confirmed delete calls backend delete method",
+        "Table refreshes and entry is removed after successful deletion",
+        "Cancelled delete leaves entry unchanged"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Create frontend reporting views: Student-wise report showing each student's name and total flight hours, and Instructor-wise report showing each instructor's name, total flight hours, and number of flights",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "📊 Student-wise total hours",
+          "📊 Instructor-wise report"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Student report displays list of all students with total hours for each",
+        "Instructor report displays list of all instructors with total hours and flight count for each",
+        "Reports call backend aggregation methods",
+        "Reports update when new flight logs are added"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Implement frontend Export to Excel button that calls backend CSV export method and triggers browser download of the CSV file with flight log data",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "📤 Export to Excel",
+          "💾 CSV backend"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Export button is visible and accessible in UI",
+        "Clicking export calls backend CSV export method",
+        "Browser downloads CSV file with all flight log data",
+        "CSV file opens correctly in spreadsheet applications",
+        "Filename includes date or identifier (e.g., flight-logs-YYYY-MM-DD.csv)"
+      ]
+    }
+  ],
+  "constraints": [
+    "Use Motoko for all backend logic in a single actor file",
+    "Use React with TypeScript and Tailwind CSS for the frontend",
+    "All time calculations must handle edge cases (e.g., flights crossing midnight)",
+    "Date format must be consistent throughout the application",
+    "All entity references must be validated (e.g., studentId must exist before creating flight log)"
+  ],
+  "nonGoals": [
+    "Mobile app development or Android APK generation",
+    "Multi-tenant or user authentication beyond Internet Identity",
+    "Advanced reporting with charts or graphs",
+    "Import functionality for existing flight log data",
+    "Integration with external flight tracking systems"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

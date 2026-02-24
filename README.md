@@ -1,2 +1,3 @@
-# pilot-flight-logbook
-Exported from Caffeine project: Pilot Flight Logbook
+## Pilot Flight Logbook
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`
