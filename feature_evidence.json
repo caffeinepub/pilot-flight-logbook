@@ -1,0 +1,23 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-exportbutton-component-to-generate-the-csv-filename-using-pilot-flight-logbook-as-the-base-name-instead-of-the-current-filename-formatted-as-pilot-flight-logbook-yyyy-mm-dd-csv-where-yyyy-mm-dd-is-the-current-date",
+      "featureTitle": "Update the ExportButton component to generate the CSV filename using 'Pilot_Flight_Logbook' as the base name instead of the current filename, formatted as 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' where YYYY-MM-DD is the current date",
+      "files": [
+        "frontend/src/components/ExportButton.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-22"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

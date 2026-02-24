@@ -1,0 +1,37 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-24T09:32:15.559Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 1,
+    "implemented": 1,
+    "items": [
+      {
+        "id": "REQ-22",
+        "summary": "Update the ExportButton component to generate the CSV filename using 'Pilot_Flight_Logbook' as the base name instead of the current filename, formatted as 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' where YYYY-MM-DD is the current date",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/ExportButton.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/ExportButton.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/components/ExportButton.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

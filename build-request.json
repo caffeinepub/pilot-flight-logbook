@@ -1,0 +1,40 @@
+{
+  "kind": "build_request",
+  "title": "Fix Excel export filename to use proper project name",
+  "projectName": "Pilot Flight Logbook",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-22",
+      "text": "Update the ExportButton component to generate the CSV filename using 'Pilot_Flight_Logbook' as the base name instead of the current filename, formatted as 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' where YYYY-MM-DD is the current date",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Excel sheet in  name not the proper work name"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Downloaded CSV file is named 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' with the current date",
+        "Filename uses underscores instead of spaces",
+        "Filename reflects the proper project name 'Pilot Flight Logbook'",
+        "Export functionality continues to work without errors"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify the CSV content format or data structure",
+    "Maintain existing export functionality and user experience"
+  ],
+  "nonGoals": [
+    "Changing the CSV data columns or content",
+    "Modifying backend export method",
+    "Adding filename customization UI"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

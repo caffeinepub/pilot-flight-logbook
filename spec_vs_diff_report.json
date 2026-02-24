@@ -1,0 +1,14 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-24T09:32:15.555Z",
+  "summary": "The diff implements REQ-22 correctly. The ExportButton component has been updated to use 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' as the filename format with the current date, underscores instead of spaces, and the proper project name. All acceptance criteria are met.",
+  "missing_requirements": [],
+  "hallucinated_features": [],
+  "confidence": 0.95,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/components/ExportButton.tsx",
+    "project_state.json"
+  ]
+}
