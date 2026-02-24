@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
 import { useCreateEntity } from '../hooks/useEntities';
 import { Loader2 } from 'lucide-react';
 
@@ -22,17 +23,31 @@ export default function AddEntityDialog({ entityType, open, onOpenChange }: AddE
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validation
+    if (entityType === 'aircraft' && !registration.trim()) {
+      toast.error('Please enter aircraft registration');
+      return;
+    }
+    if ((entityType === 'student' || entityType === 'instructor' || entityType === 'exercise') && !name.trim()) {
+      toast.error('Please enter a name');
+      return;
+    }
+    
     const id = crypto.randomUUID();
     
     try {
       if (entityType === 'student') {
         await createEntity.mutateAsync({ id, name });
+        toast.success('Student added successfully');
       } else if (entityType === 'instructor') {
         await createEntity.mutateAsync({ id, name });
+        toast.success('Instructor added successfully');
       } else if (entityType === 'aircraft') {
         await createEntity.mutateAsync({ id, registration });
+        toast.success('Aircraft added successfully');
       } else if (entityType === 'exercise') {
         await createEntity.mutateAsync({ id, name, description });
+        toast.success('Exercise added successfully');
       }
       
       // Reset form
@@ -42,6 +57,7 @@ export default function AddEntityDialog({ entityType, open, onOpenChange }: AddE
       onOpenChange(false);
     } catch (error) {
       console.error('Error creating entity:', error);
+      toast.error(`Failed to add ${entityType}. Please try again.`);
     }
   };
 

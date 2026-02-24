@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Edit, Trash2, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useFlightLogs, useDeleteFlightLog } from '../hooks/useFlightLogs';
 import type { FlightLog } from '../backend';
 
@@ -20,9 +21,11 @@ export default function FlightLogTable({ onEdit }: FlightLogTableProps) {
     if (deleteId !== null) {
       try {
         await deleteFlightLog.mutateAsync(deleteId);
+        toast.success('Flight log deleted successfully');
         setDeleteId(null);
       } catch (error) {
         console.error('Error deleting flight log:', error);
+        toast.error('Failed to delete flight log. Please try again.');
       }
     }
   };
@@ -60,11 +63,9 @@ export default function FlightLogTable({ onEdit }: FlightLogTableProps) {
                     <TableHead>Aircraft</TableHead>
                     <TableHead>Exercise</TableHead>
                     <TableHead>Type</TableHead>
-                    <TableHead>Landing</TableHead>
-                    <TableHead className="text-right">Count</TableHead>
-                    <TableHead>Takeoff</TableHead>
-                    <TableHead>Landing</TableHead>
-                    <TableHead className="text-right">Hours</TableHead>
+                    <TableHead>Landings</TableHead>
+                    <TableHead>Times</TableHead>
+                    <TableHead>Total Hours</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -76,27 +77,34 @@ export default function FlightLogTable({ onEdit }: FlightLogTableProps) {
                       <TableCell>{log.instructorName}</TableCell>
                       <TableCell>{log.aircraftRegistration}</TableCell>
                       <TableCell>{log.exerciseName}</TableCell>
-                      <TableCell>{log.flightType}</TableCell>
-                      <TableCell>{log.landingType}</TableCell>
-                      <TableCell className="text-right">{log.landingCount.toString()}</TableCell>
-                      <TableCell>{log.takeoffTime}</TableCell>
-                      <TableCell>{log.landingTime}</TableCell>
-                      <TableCell className="text-right">{log.totalHours.toFixed(2)}</TableCell>
+                      <TableCell>
+                        <div className="text-xs">
+                          <div>{log.flightType}</div>
+                          <div className="text-muted-foreground">{log.landingType}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{log.landingCount.toString()}</TableCell>
+                      <TableCell>
+                        <div className="text-xs">
+                          <div>{log.takeoffTime} - {log.landingTime}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{log.totalHours.toFixed(2)}h</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             onClick={() => onEdit(log)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
-                            size="icon"
+                            size="sm"
                             onClick={() => setDeleteId(log.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </div>
                       </TableCell>
@@ -119,8 +127,7 @@ export default function FlightLogTable({ onEdit }: FlightLogTableProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={deleteFlightLog.isPending}>
-              {deleteFlightLog.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

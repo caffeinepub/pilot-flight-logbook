@@ -1,168 +1,63 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Pilot Flight Logbook - Frontend Implementation",
+  "title": "Add update button to flight log form",
   "requirements": [
     {
-      "id": "REQ-7",
-      "summary": "Create frontend forms to add Students, Instructors, Aircraft, and Exercises with separate dialogs",
+      "id": "REQ-19",
+      "summary": "Add an 'Update' button to the flight log form that appears when editing an existing flight log entry, saves changes to the backend, and closes the edit dialog",
       "acceptanceCriteria": [
-        "UI provides separate controls to add Students with name input",
-        "UI provides separate controls to add Instructors with name input",
-        "UI provides separate controls to add Aircraft with registration input",
-        "UI provides separate controls to add Exercises with name/description input",
-        "Each add form validates input and calls backend create methods"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/AddEntityDialog.tsx",
-          "operation": "create",
-          "description": "Create a reusable dialog component for adding Students, Instructors, Aircraft, and Exercises. The component accepts entity type as a prop and renders appropriate form fields (name for Student/Instructor, registration for Aircraft, name+description for Exercise). Includes validation and calls the corresponding backend create method (createStudent, createInstructor, createAircraft, createExercise) with generated UUID. Uses shadcn/ui Dialog, Form, Input, Button, and Label components. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useEntities.ts",
-          "operation": "create",
-          "description": "Create a custom hook to manage entity data fetching and mutations. Provides methods to fetch all Students, Instructors, Aircraft, and Exercises using backend methods (getAllStudents, getAllInstructors, getAllAircraft, getAllExercises). Includes create, update, and delete mutations for each entity type. Returns loading states and error handling. Uses React Query or similar state management pattern."
-        }
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "summary": "Create flight log entry form with auto-populated date, dropdowns, toggles, time inputs, and auto-calculated total hours",
-      "acceptanceCriteria": [
-        "Date field defaults to current date on form load",
-        "Date can be changed via calendar picker UI component",
-        "All dropdowns populate from backend data (Students, Instructors, Aircraft, Exercises)",
-        "Flight type toggle switches between Solo and Dual",
-        "Landing type toggle switches between Day and Night",
-        "Landing count accepts positive integers",
-        "Takeoff and landing time inputs accept HH:MM format",
-        "Total hours displays automatically calculated value as times are entered",
-        "Submit button calls backend to create new flight log entry"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/FlightLogForm.tsx",
-          "operation": "create",
-          "description": "Create the main flight log entry form component with all required fields. Includes date picker (defaulting to today) using shadcn/ui Calendar component, Select components for Student/Instructor/Aircraft/Exercise dropdowns populated from useEntities hook, Toggle components for Solo/Dual and Day/Night, numeric Input for landing count, time Inputs for takeoff/landing times with HH:MM validation, and a read-only display of auto-calculated total hours. Calculates total hours in real-time by parsing takeoff and landing times. On submit, calls backend createFlightLog method. Supports both create and edit modes via optional flightLog prop. Uses shadcn/ui Form, Select, Toggle, Input, Button, and Calendar components. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/utils/timeCalculations.ts",
-          "operation": "create",
-          "description": "Create utility functions for time calculations. Includes parseTime (converts HH:MM string to minutes), formatTime (converts minutes to HH:MM), and calculateTotalHours (computes hours difference between takeoff and landing times, handling edge cases like flights crossing midnight). Returns Float for totalHours matching backend interface."
-        }
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "summary": "Create table view displaying all flight log entries with Edit and Delete action buttons",
-      "acceptanceCriteria": [
-        "Table displays all flight log entries retrieved from backend",
-        "Each row shows all flight log fields with resolved names (not IDs)",
-        "Edit button on each row opens form pre-populated with entry data",
-        "Delete button on each row removes the entry after confirmation",
-        "Table updates automatically after create, edit, or delete operations"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/FlightLogTable.tsx",
-          "operation": "create",
-          "description": "Create a table component displaying all flight log entries. Fetches data using useFlightLogs hook (to be created). Displays columns: Date, Student (resolved name), Instructor (resolved name), Aircraft (resolved registration), Exercise (resolved name), Flight Type, Landing Type, Landing Count, Takeoff Time, Landing Time, Total Hours. Each row includes Edit and Delete action buttons. Edit button triggers onEdit callback with entry data. Delete button shows confirmation dialog then calls backend deleteFlightLog. Uses shadcn/ui Table, Button, and AlertDialog components. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useFlightLogs.ts",
-          "operation": "create",
-          "description": "Create a custom hook to manage flight log data. Fetches all flight logs using backend getAllFlightLogs method. Resolves foreign key references (studentId, instructorId, aircraftId, exerciseId) to display names/registrations by cross-referencing with entity data from useEntities hook. Provides create, update, and delete mutations that refresh the flight logs list. Returns resolved flight log entries with names instead of IDs, loading states, and mutation methods."
-        }
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "summary": "Implement edit functionality to open form pre-filled with existing entry data and save changes",
-      "acceptanceCriteria": [
-        "Edit button populates form with all existing entry data",
-        "All fields (date, dropdowns, toggles, times, counts) are editable",
-        "Submit in edit mode calls backend update method",
-        "Table refreshes with updated data after successful edit",
-        "Form can be cancelled to discard changes"
+        "Update button is visible in the form when editing a flight log entry",
+        "Button is positioned at the specified XPath location alongside the existing submit button",
+        "Clicking the update button calls the updateFlightLog mutation with the modified data",
+        "Button shows loading state during the update operation",
+        "Form closes and flight logs table refreshes after successful update",
+        "Toast notification confirms successful update"
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/FlightLogForm.tsx",
           "operation": "modify",
-          "description": "Extend FlightLogForm component to support edit mode. Accept optional flightLog prop for editing. When provided, pre-populate all form fields with existing values (date, selected IDs for dropdowns, flight type, landing type, landing count, times). In edit mode, submit calls backend updateFlightLog instead of createFlightLog. Add cancel button to close form without saving. Ensure form switches between create/edit modes seamlessly."
+          "description": "Add conditional rendering for an 'Update' button that appears when the form is in edit mode (editingLog prop is provided). Position this button as the second button in the form's button container at XPath /html[1]/body[1]/div[3]/form[1]/div[2]/button[2]. The Update button should call the updateFlightLog mutation from useFlightLogs hook with the current form values including the editingLog id, show a loading state during the operation using the mutation's isPending status, display a success toast notification upon completion, and trigger the onSuccess callback to close the dialog and refresh the flight logs table. Ensure the button is styled consistently with the existing submit button using shadcn-ui Button component."
         }
       ]
     },
     {
-      "id": "REQ-11",
-      "summary": "Implement delete functionality with confirmation dialog",
+      "id": "REQ-20",
+      "summary": "Ensure the date input field maintains its current functionality during edit mode, allowing users to modify the date value using the calendar picker",
       "acceptanceCriteria": [
-        "Delete button shows confirmation dialog before deletion",
-        "Confirmed delete calls backend delete method",
-        "Table refreshes and entry is removed after successful deletion",
-        "Cancelled delete leaves entry unchanged"
+        "Date input field is editable when the form is in edit mode",
+        "Calendar picker opens when clicking the date field",
+        "Selected date from calendar updates the input value",
+        "Date field validation continues to work correctly"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/FlightLogTable.tsx",
+          "path": "frontend/src/components/FlightLogForm.tsx",
           "operation": "modify",
-          "description": "Ensure Delete button in FlightLogTable uses shadcn/ui AlertDialog component for confirmation. On confirmation, calls deleteFlightLog mutation from useFlightLogs hook with the entry ID. On success, table automatically refreshes via the hook's refetch mechanism. On cancel, dialog closes without action. Verify the component's usage instructions before implementing."
+          "description": "Verify that the date input field at XPath /html[1]/body[1]/div[3]/form[1]/div[1]/div[1]/input[1] is not disabled when the form is in edit mode. Ensure the calendar picker functionality remains active, the value binding correctly updates when a new date is selected, and all existing validation rules continue to apply during edit operations. No structural changes should be needed if the field is already properly implemented with controlled input and calendar picker integration."
         }
       ]
     },
     {
-      "id": "REQ-12",
-      "summary": "Create reporting views for student total hours and instructor reports",
+      "id": "REQ-21",
+      "summary": "Verify that the close button properly cancels the edit operation and closes the form dialog without saving changes",
       "acceptanceCriteria": [
-        "Student report displays list of all students with total hours for each",
-        "Instructor report displays list of all instructors with total hours and flight count for each",
-        "Reports call backend aggregation methods",
-        "Reports update when new flight logs are added"
+        "Close button is visible and clickable in the dialog",
+        "Clicking close button cancels the edit operation",
+        "Form dialog closes without persisting any changes",
+        "No backend mutation is triggered when closing without update"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/StudentReport.tsx",
-          "operation": "create",
-          "description": "Create a component displaying student-wise total hours report. Fetches all students using getAllStudents backend method, then for each student calls getStudentTotalHours to retrieve aggregated flight hours. Displays student name and total hours in a table or card layout. Updates automatically when flight logs change. Uses shadcn/ui Table or Card components. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/InstructorReport.tsx",
-          "operation": "create",
-          "description": "Create a component displaying instructor-wise report. Fetches all instructors using getAllInstructors backend method, then for each instructor calls getInstructorReport to retrieve total hours and flight count (returned as tuple [hours, count]). Displays instructor name, total hours, and number of flights in a table or card layout. Updates automatically when flight logs change. Uses shadcn/ui Table or Card components. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/hooks/useReports.ts",
-          "operation": "create",
-          "description": "Create a custom hook to manage report data. Provides methods to fetch student total hours and instructor reports by iterating through entities and calling backend aggregation methods (getStudentTotalHours, getInstructorReport). Returns formatted report data with loading states and error handling. Refreshes when flight log data changes."
-        }
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "summary": "Implement Export to Excel button triggering CSV download",
-      "acceptanceCriteria": [
-        "Export button is visible and accessible in UI",
-        "Clicking export calls backend CSV export method",
-        "Browser downloads CSV file with all flight log data",
-        "CSV file opens correctly in spreadsheet applications",
-        "Filename includes date or identifier (e.g., flight-logs-YYYY-MM-DD.csv)"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/ExportButton.tsx",
-          "operation": "create",
-          "description": "Create an Export button component that calls backend exportFlightLogsAsCSV method. On click, fetches CSV text from backend, creates a Blob, generates a download link with filename format 'flight-logs-YYYY-MM-DD.csv' (using current date), and triggers browser download. Includes loading state during export. Uses shadcn/ui Button component. Verify the component's usage instructions before implementing."
+          "path": "frontend/src/components/FlightLogForm.tsx",
+          "operation": "modify",
+          "description": "Verify that the close button at XPath /html[1]/body[1]/div[3]/button[1] (likely part of the parent dialog component) properly calls the onCancel or dialog close handler without triggering any mutations. Ensure the form state is reset when closing in edit mode, preventing any unsaved changes from persisting. Review the dialog wrapper (likely in App.tsx where the FlightLogForm is used) to confirm the close button behavior is correctly wired to close the dialog and clear the editingLog state."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Integrate all flight log components into the main App component. Create a layout with navigation tabs or sections for: Flight Log Entry (FlightLogForm), Flight Log List (FlightLogTable), Student Report (StudentReport), Instructor Report (InstructorReport), and Export (ExportButton). Include buttons to open AddEntityDialog for Students, Instructors, Aircraft, and Exercises. Manage state for currently editing flight log and pass to FlightLogForm. Use Tailwind CSS for responsive layout and shadcn/ui Tabs component for section navigation. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Add global styling for the flight logbook application. Include Tailwind base, components, and utilities layers. Add custom styles for table layouts, form spacing, and responsive design. Ensure consistent color scheme and typography throughout the application using Tailwind's utility classes and CSS variables for shadcn/ui theme colors."
+          "description": "Verify that the dialog containing FlightLogForm has a proper close button that clears the editingLog state variable without triggering any save operations. Ensure clicking the close button or dialog overlay dismisses the dialog and resets the form to its initial state, ready for the next create or edit operation."
         }
       ]
     }

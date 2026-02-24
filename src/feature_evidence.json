@@ -2,65 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-frontend-form-to-add-new-students-instructors-aircraft-and-exercises-with-separate-add-buttons-dialogs-for-each-entity-type",
-      "featureTitle": "Create frontend form to add new Students, Instructors, Aircraft, and Exercises with separate add buttons/dialogs for each entity type",
-      "files": [
-        "frontend/src/components/AddEntityDialog.tsx",
-        "frontend/src/hooks/useEntities.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-frontend-flight-log-entry-form-with-date-field-auto-populated-with-today-s-date-and-calendar-picker-for-manual-change-dropdown-selectors-for-student-instructor-aircraft-and-exercise-populated-from-backend-toggle-for-solo-dual-flight-type-toggle-for-day-night-landing-type-numeric-input-for-landing-count-time-inputs-for-takeoff-and-landing-times-hh-mm-format-auto-calculated-and-displayed-total-hours-and-submit-button",
-      "featureTitle": "Create frontend flight log entry form with: date field auto-populated with today's date and calendar picker for manual change, dropdown selectors for Student, Instructor, Aircraft, and Exercise populated from backend, toggle for Solo/Dual flight type, toggle for Day/Night landing type, numeric input for landing count, time inputs for takeoff and landing times (HH:MM format), auto-calculated and displayed total hours, and submit button",
-      "files": [
-        "frontend/src/components/FlightLogForm.tsx",
-        "frontend/src/utils/timeCalculations.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-frontend-table-list-view-to-display-all-flight-log-entries-with-columns-date-student-instructor-aircraft-exercise-flight-type-landing-type-landing-count-takeoff-time-landing-time-total-hours-and-action-buttons-for-edit-and-delete-on-each-row",
-      "featureTitle": "Create frontend table/list view to display all flight log entries with columns: Date, Student, Instructor, Aircraft, Exercise, Flight Type, Landing Type, Landing Count, Takeoff Time, Landing Time, Total Hours, and action buttons for Edit and Delete on each row",
-      "files": [
-        "frontend/src/components/FlightLogTable.tsx",
-        "frontend/src/hooks/useFlightLogs.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-9"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-frontend-edit-functionality-clicking-edit-on-a-flight-log-entry-opens-the-entry-form-pre-filled-with-existing-data-allows-modification-of-all-fields-and-saves-changes-to-backend-on-submit",
-      "featureTitle": "Implement frontend edit functionality: clicking Edit on a flight log entry opens the entry form pre-filled with existing data, allows modification of all fields, and saves changes to backend on submit",
+      "featureId": "feature-add-an-update-button-to-the-flight-log-form-that-appears-when-editing-an-existing-flight-log-entry-positioned-at-xpath-html-1-body-1-div-3-form-1-div-2-button-2-which-saves-changes-to-the-backend-and-closes-the-edit-dialog",
+      "featureTitle": "Add an 'Update' button to the flight log form that appears when editing an existing flight log entry, positioned at XPath /html[1]/body[1]/div[3]/form[1]/div[2]/button[2], which saves changes to the backend and closes the edit dialog",
       "files": [
         "frontend/src/components/FlightLogForm.tsx"
       ],
@@ -72,15 +15,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-10"
+        "REQ-19"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-frontend-delete-functionality-clicking-delete-on-a-flight-log-entry-shows-confirmation-dialog-and-on-confirmation-calls-backend-delete-method-and-refreshes-the-table",
-      "featureTitle": "Implement frontend delete functionality: clicking Delete on a flight log entry shows confirmation dialog, and on confirmation calls backend delete method and refreshes the table",
+      "featureId": "feature-ensure-the-date-input-field-at-xpath-html-1-body-1-div-3-form-1-div-1-div-1-input-1-maintains-its-current-functionality-during-edit-mode-allowing-users-to-modify-the-date-value-using-the-calendar-picker",
+      "featureTitle": "Ensure the date input field at XPath /html[1]/body[1]/div[3]/form[1]/div[1]/div[1]/input[1] maintains its current functionality during edit mode, allowing users to modify the date value using the calendar picker",
       "files": [
-        "frontend/src/components/FlightLogTable.tsx"
+        "frontend/src/components/FlightLogForm.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -90,17 +33,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-11"
+        "REQ-20"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-frontend-reporting-views-student-wise-report-showing-each-student-s-name-and-total-flight-hours-and-instructor-wise-report-showing-each-instructor-s-name-total-flight-hours-and-number-of-flights",
-      "featureTitle": "Create frontend reporting views: Student-wise report showing each student's name and total flight hours, and Instructor-wise report showing each instructor's name, total flight hours, and number of flights",
+      "featureId": "feature-verify-that-the-close-button-at-xpath-html-1-body-1-div-3-button-1-properly-cancels-the-edit-operation-and-closes-the-form-dialog-without-saving-changes",
+      "featureTitle": "Verify that the close button at XPath /html[1]/body[1]/div[3]/button[1] properly cancels the edit operation and closes the form dialog without saving changes",
       "files": [
-        "frontend/src/components/InstructorReport.tsx",
-        "frontend/src/components/StudentReport.tsx",
-        "frontend/src/hooks/useReports.ts"
+        "frontend/src/components/FlightLogForm.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -110,27 +51,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-12"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-frontend-export-to-excel-button-that-calls-backend-csv-export-method-and-triggers-browser-download-of-the-csv-file-with-flight-log-data",
-      "featureTitle": "Implement frontend Export to Excel button that calls backend CSV export method and triggers browser download of the CSV file with flight log data",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/ExportButton.tsx",
-        "frontend/src/index.css"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-13"
+        "REQ-21"
       ],
       "confidence": "high"
     }

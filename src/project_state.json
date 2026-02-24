@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
+  "projectStateVersion": 7,
   "summary": "Pilot Flight Logbook - Single file app with comprehensive flight tracking, student/instructor management, and reporting features",
   "architectural_notes": [
     "Single-file application architecture",
@@ -8,7 +8,7 @@
     "Auto-calculation of total flight hours from takeoff/landing times"
   ],
   "known_issues": [],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-frontend-form-to-add-new-students-instructors-aircraft-and-exercises-with-separate-add-buttons-dialogs-for-each-entity-type",
@@ -63,6 +63,62 @@
       "title": "Implement frontend Export to Excel button that calls backend CSV export method and triggers browser download of the CSV file with flight log data",
       "reqIds": [
         "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-identify-all-non-working-functionality-in-the-flight-logbook-application-including-form-submissions-data-loading-entity-creation-flight-log-crud-operations-reporting-views-and-csv-export",
+      "title": "Investigate and identify all non-working functionality in the flight logbook application including form submissions, data loading, entity creation, flight log CRUD operations, reporting views, and CSV export",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-any-frontend-react-hooks-errors-including-useentities-useflightlogs-usereports-and-useactor-hooks-to-ensure-proper-data-fetching-mutation-handling-and-state-management",
+      "title": "Fix any frontend React hooks errors including useEntities, useFlightLogs, useReports, and useActor hooks to ensure proper data fetching, mutation handling, and state management",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-any-ui-component-errors-in-flightlogform-flightlogtable-addentitydialog-studentreport-instructorreport-and-exportbutton-including-form-validation-data-binding-and-event-handling-issues",
+      "title": "Fix any UI component errors in FlightLogForm, FlightLogTable, AddEntityDialog, StudentReport, InstructorReport, and ExportButton including form validation, data binding, and event handling issues",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-and-fix-internet-identity-authentication-integration-to-ensure-users-can-log-in-maintain-session-state-and-that-authenticated-operations-use-the-correct-identity-principal",
+      "title": "Verify and fix Internet Identity authentication integration to ensure users can log in, maintain session state, and that authenticated operations use the correct identity principal",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-update-button-to-the-flight-log-form-that-appears-when-editing-an-existing-flight-log-entry-positioned-at-xpath-html-1-body-1-div-3-form-1-div-2-button-2-which-saves-changes-to-the-backend-and-closes-the-edit-dialog",
+      "title": "Add an 'Update' button to the flight log form that appears when editing an existing flight log entry, positioned at XPath /html[1]/body[1]/div[3]/form[1]/div[2]/button[2], which saves changes to the backend and closes the edit dialog",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-date-input-field-at-xpath-html-1-body-1-div-3-form-1-div-1-div-1-input-1-maintains-its-current-functionality-during-edit-mode-allowing-users-to-modify-the-date-value-using-the-calendar-picker",
+      "title": "Ensure the date input field at XPath /html[1]/body[1]/div[3]/form[1]/div[1]/div[1]/input[1] maintains its current functionality during edit mode, allowing users to modify the date value using the calendar picker",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-close-button-at-xpath-html-1-body-1-div-3-button-1-properly-cancels-the-edit-operation-and-closes-the-form-dialog-without-saving-changes",
+      "title": "Verify that the close button at XPath /html[1]/body[1]/div[3]/button[1] properly cancels the edit operation and closes the form dialog without saving changes",
+      "reqIds": [
+        "REQ-21"
       ],
       "version": 1
     }
@@ -162,6 +218,20 @@
       "reqIds": [
         "REQ-6"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Fix any backend actor method errors including data persistence issues, query failures, or mutation errors in CRUD operations for Students, Instructors, Aircraft, Exercises, and FlightLogs",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Add update button to the application",
+      "reqIds": [],
       "status": "pending"
     }
   ],

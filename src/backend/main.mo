@@ -8,6 +8,8 @@ import Array "mo:core/Array";
 import Runtime "mo:core/Runtime";
 import Iter "mo:core/Iter";
 
+
+
 actor {
   type Student = {
     id : Text;
@@ -53,36 +55,6 @@ actor {
 
   var nextFlightLogId = 0;
 
-  module Student {
-    public func compare(a : Student, b : Student) : Order.Order {
-      Text.compare(a.id, b.id);
-    };
-  };
-
-  module Instructor {
-    public func compare(a : Instructor, b : Instructor) : Order.Order {
-      Text.compare(a.id, b.id);
-    };
-  };
-
-  module Aircraft {
-    public func compare(a : Aircraft, b : Aircraft) : Order.Order {
-      Text.compare(a.id, b.id);
-    };
-  };
-
-  module Exercise {
-    public func compare(a : Exercise, b : Exercise) : Order.Order {
-      Text.compare(a.id, b.id);
-    };
-  };
-
-  module FlightLog {
-    public func compare(a : FlightLog, b : FlightLog) : Order.Order {
-      Nat.compare(a.id, b.id);
-    };
-  };
-
   // Student CRUD
   public shared ({ caller }) func createStudent(id : Text, name : Text) : async () {
     if (students.containsKey(id)) {
@@ -92,7 +64,7 @@ actor {
   };
 
   public query ({ caller }) func getAllStudents() : async [Student] {
-    students.values().toArray().sort(Student.compare);
+    students.values().toArray();
   };
 
   public shared ({ caller }) func updateStudent(id : Text, name : Text) : async () {
@@ -118,7 +90,7 @@ actor {
   };
 
   public query ({ caller }) func getAllInstructors() : async [Instructor] {
-    instructors.values().toArray().sort(Instructor.compare);
+    instructors.values().toArray();
   };
 
   public shared ({ caller }) func updateInstructor(id : Text, name : Text) : async () {
@@ -144,7 +116,7 @@ actor {
   };
 
   public query ({ caller }) func getAllAircraft() : async [Aircraft] {
-    aircraft.values().toArray().sort();
+    aircraft.values().toArray();
   };
 
   public shared ({ caller }) func updateAircraft(id : Text, registration : Text) : async () {
@@ -170,7 +142,7 @@ actor {
   };
 
   public query ({ caller }) func getAllExercises() : async [Exercise] {
-    exercises.values().toArray().sort();
+    exercises.values().toArray();
   };
 
   public shared ({ caller }) func updateExercise(id : Text, name : Text, description : Text) : async () {
@@ -221,7 +193,7 @@ actor {
   };
 
   public query ({ caller }) func getAllFlightLogs() : async [FlightLog] {
-    flightLogs.values().toArray().sort();
+    flightLogs.values().toArray();
   };
 
   public shared ({ caller }) func updateFlightLog(

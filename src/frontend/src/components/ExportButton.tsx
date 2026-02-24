@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useActor } from '../hooks/useActor';
 import { format } from 'date-fns';
 
@@ -9,7 +10,10 @@ export default function ExportButton() {
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = async () => {
-    if (!actor) return;
+    if (!actor) {
+      toast.error('Unable to export. Please try again.');
+      return;
+    }
 
     setIsExporting(true);
     try {
@@ -21,7 +25,7 @@ export default function ExportButton() {
       const url = URL.createObjectURL(blob);
       
       link.setAttribute('href', url);
-      link.setAttribute('download', `flight-logs-${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.setAttribute('download', `flight_logs_${format(new Date(), 'yyyy-MM-dd')}.csv`);
       link.style.visibility = 'hidden';
       
       document.body.appendChild(link);
@@ -29,8 +33,10 @@ export default function ExportButton() {
       document.body.removeChild(link);
       
       URL.revokeObjectURL(url);
+      toast.success('Flight logs exported successfully');
     } catch (error) {
       console.error('Error exporting flight logs:', error);
+      toast.error('Failed to export flight logs. Please try again.');
     } finally {
       setIsExporting(false);
     }

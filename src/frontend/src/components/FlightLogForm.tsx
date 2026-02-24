@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 import { useEntities } from '../hooks/useEntities';
 import { useCreateFlightLog, useUpdateFlightLog } from '../hooks/useFlightLogs';
 import { calculateTotalHours, formatTime } from '../utils/timeCalculations';
@@ -49,6 +50,18 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
       setLandingCount(flightLog.landingCount.toString());
       setTakeoffTime(flightLog.takeoffTime);
       setLandingTime(flightLog.landingTime);
+    } else {
+      // Reset to defaults when not editing
+      setDate(new Date());
+      setStudentId('');
+      setInstructorId('');
+      setAircraftId('');
+      setExerciseId('');
+      setFlightType('Dual');
+      setLandingType('Day');
+      setLandingCount('1');
+      setTakeoffTime('');
+      setLandingTime('');
     }
   }, [flightLog]);
 
@@ -56,6 +69,11 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!studentId || !instructorId || !aircraftId || !exerciseId) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
 
     const formData = {
       date: format(date, 'yyyy-MM-dd'),
@@ -71,32 +89,59 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
     };
 
     try {
-      if (isEditMode && flightLog) {
-        await updateFlightLog.mutateAsync({
-          id: flightLog.id,
-          ...formData,
-        });
-      } else {
-        await createFlightLog.mutateAsync(formData);
-      }
+      await createFlightLog.mutateAsync(formData);
+      toast.success('Flight log created successfully');
 
       // Reset form
-      if (!isEditMode) {
-        setDate(new Date());
-        setStudentId('');
-        setInstructorId('');
-        setAircraftId('');
-        setExerciseId('');
-        setFlightType('Dual');
-        setLandingType('Day');
-        setLandingCount('1');
-        setTakeoffTime('');
-        setLandingTime('');
-      }
+      setDate(new Date());
+      setStudentId('');
+      setInstructorId('');
+      setAircraftId('');
+      setExerciseId('');
+      setFlightType('Dual');
+      setLandingType('Day');
+      setLandingCount('1');
+      setTakeoffTime('');
+      setLandingTime('');
 
       onSuccess?.();
     } catch (error) {
-      console.error('Error saving flight log:', error);
+      console.error('Error creating flight log:', error);
+      toast.error('Failed to create flight log. Please try again.');
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!studentId || !instructorId || !aircraftId || !exerciseId) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    if (!flightLog) return;
+
+    const formData = {
+      id: flightLog.id,
+      date: format(date, 'yyyy-MM-dd'),
+      studentId,
+      instructorId,
+      aircraftId,
+      exerciseId,
+      flightType,
+      landingType,
+      landingCount: BigInt(parseInt(landingCount) || 0),
+      takeoffTime,
+      landingTime,
+    };
+
+    try {
+      await updateFlightLog.mutateAsync(formData);
+      toast.success('Flight log updated successfully');
+      onSuccess?.();
+    } catch (error) {
+      console.error('Error updating flight log:', error);
+      toast.error('Failed to update flight log. Please try again.');
     }
   };
 
@@ -123,7 +168,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={isEditMode ? handleUpdate : handleSubmit} className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="date">Date</Label>
@@ -281,16 +326,26 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
           </div>
 
           <div className="flex gap-3">
-            <Button type="submit" disabled={createFlightLog.isPending || updateFlightLog.isPending}>
-              {(createFlightLog.isPending || updateFlightLog.isPending) && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              {isEditMode ? 'Update Entry' : 'Submit Entry'}
-            </Button>
-            {isEditMode && (
-              <Button type="button" variant="outline" onClick={handleCancel}>
-                Cancel
+            {!isEditMode && (
+              <Button type="submit" disabled={createFlightLog.isPending}>
+                {createFlightLog.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Submit Entry
               </Button>
+            )}
+            {isEditMode && (
+              <>
+                <Button type="submit" disabled={updateFlightLog.isPending}>
+                  {updateFlightLog.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Update
+                </Button>
+                <Button type="button" variant="outline" onClick={handleCancel}>
+                  Cancel
+                </Button>
+              </>
             )}
           </div>
         </form>

@@ -8,14 +8,22 @@ import StudentReport from './components/StudentReport';
 import InstructorReport from './components/InstructorReport';
 import ExportButton from './components/ExportButton';
 import AddEntityDialog from './components/AddEntityDialog';
+import { Toaster } from '@/components/ui/sonner';
 import type { FlightLog } from './backend';
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState('entry');
   const [editingFlightLog, setEditingFlightLog] = useState<FlightLog | null>(null);
   const [showStudentDialog, setShowStudentDialog] = useState(false);
   const [showInstructorDialog, setShowInstructorDialog] = useState(false);
   const [showAircraftDialog, setShowAircraftDialog] = useState(false);
   const [showExerciseDialog, setShowExerciseDialog] = useState(false);
+
+  const handleEdit = (log: FlightLog) => {
+    setEditingFlightLog(log);
+    setActiveTab('entry');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,7 +56,7 @@ export default function App() {
           </Button>
         </div>
 
-        <Tabs defaultValue="entry" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
             <TabsTrigger value="entry">Flight Entry</TabsTrigger>
             <TabsTrigger value="logs">Flight Logs</TabsTrigger>
@@ -67,11 +75,7 @@ export default function App() {
           </TabsContent>
 
           <TabsContent value="logs" className="mt-6">
-            <FlightLogTable onEdit={(log) => {
-              setEditingFlightLog(log);
-              // Scroll to top to show the form
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }} />
+            <FlightLogTable onEdit={handleEdit} />
           </TabsContent>
 
           <TabsContent value="reports" className="mt-6">
@@ -129,6 +133,8 @@ export default function App() {
         open={showExerciseDialog}
         onOpenChange={setShowExerciseDialog}
       />
+      
+      <Toaster />
     </div>
   );
 }

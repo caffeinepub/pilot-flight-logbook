@@ -69,7 +69,9 @@ export function useCreateEntity(entityType: 'student' | 'instructor' | 'aircraft
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [entityType === 'aircraft' ? 'aircraft' : `${entityType}s`] });
+      // Invalidate the correct query key
+      const queryKey = entityType === 'aircraft' ? 'aircraft' : `${entityType}s`;
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
     },
   });
 }
