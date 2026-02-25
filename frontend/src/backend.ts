@@ -89,6 +89,13 @@ export class ExternalBlob {
         return this;
     }
 }
+export type StudentResult = {
+    __kind__: "ok";
+    ok: Student;
+} | {
+    __kind__: "err";
+    err: string;
+};
 export interface Exercise {
     id: string;
     name: string;
@@ -98,14 +105,43 @@ export interface Instructor {
     id: string;
     name: string;
 }
+export type AircraftResult = {
+    __kind__: "ok";
+    ok: Aircraft;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export interface User {
+    principal: Principal;
+    name: string;
+    role: Role;
+}
+export type InstructorResult = {
+    __kind__: "ok";
+    ok: Instructor;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export type ExerciseResult = {
+    __kind__: "ok";
+    ok: Exercise;
+} | {
+    __kind__: "err";
+    err: string;
+};
 export interface FlightLog {
     id: bigint;
     studentId: string;
     exerciseId: string;
     totalHours: number;
     date: string;
+    sunriseTime: string;
     flightType: string;
+    sunsetTime: string;
     instructorId: string;
+    aircraftHours: number;
     aircraftId: string;
     takeoffTime: string;
     landingTime: string;
@@ -116,38 +152,146 @@ export interface Aircraft {
     id: string;
     registration: string;
 }
+export type UserRoleResult = {
+    __kind__: "ok";
+    ok: Role;
+} | {
+    __kind__: "error";
+    error: string;
+};
+export type UpdateRoleResult = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "error";
+    error: string;
+};
+export type FlightLogResult = {
+    __kind__: "ok";
+    ok: FlightLog;
+} | {
+    __kind__: "err";
+    err: string;
+};
+export interface UserProfile {
+    name: string;
+}
 export interface Student {
     id: string;
     name: string;
 }
+export enum SuccessResult {
+    ok = "ok"
+}
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
+}
 export interface backendInterface {
-    createAircraft(id: string, registration: string): Promise<void>;
-    createExercise(id: string, name: string, description: string): Promise<void>;
-    createFlightLog(date: string, studentId: string, instructorId: string, aircraftId: string, exerciseId: string, flightType: string, landingType: string, landingCount: bigint, takeoffTime: string, landingTime: string): Promise<bigint>;
-    createInstructor(id: string, name: string): Promise<void>;
-    createStudent(id: string, name: string): Promise<void>;
-    deleteAircraft(id: string): Promise<void>;
-    deleteExercise(id: string): Promise<void>;
-    deleteFlightLog(id: bigint): Promise<void>;
-    deleteInstructor(id: string): Promise<void>;
-    deleteStudent(id: string): Promise<void>;
+    _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    /**
+     * / Register or update a user. Admin-only.
+     */
+    addOrUpdateUser(id: Principal, name: string, role: Role): Promise<SuccessResult>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    createAircraft(_id: string, registration: string): Promise<Aircraft>;
+    createExercise(_id: string, name: string, description: string): Promise<Exercise>;
+    createFlightLog(date: string, studentId: string, instructorId: string, aircraftId: string, exerciseId: string, flightType: string, landingType: string, landingCount: bigint, takeoffTime: string, landingTime: string, aircraftHours: number, sunriseTime: string, sunsetTime: string): Promise<FlightLog>;
+    createInstructor(_id: string, name: string): Promise<Instructor>;
+    createStudent(_id: string, name: string): Promise<Student>;
+    deleteAircraft(id: string): Promise<SuccessResult>;
+    deleteExercise(id: string): Promise<SuccessResult>;
+    deleteFlightLog(id: bigint): Promise<SuccessResult>;
+    deleteInstructor(id: string): Promise<SuccessResult>;
+    deleteStudent(id: string): Promise<SuccessResult>;
     exportFlightLogsAsCSV(): Promise<string>;
+    getAircraft(id: string): Promise<AircraftResult>;
     getAllAircraft(): Promise<Array<Aircraft>>;
     getAllExercises(): Promise<Array<Exercise>>;
     getAllFlightLogs(): Promise<Array<FlightLog>>;
     getAllInstructors(): Promise<Array<Instructor>>;
+    /**
+     * / Return all registered users. Admin-only (contains sensitive role/principal data).
+     */
+    getAllRegisteredUsers(): Promise<Array<User>>;
     getAllStudents(): Promise<Array<Student>>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
+    getCallerUserRole(): Promise<UserRole>;
+    /**
+     * / Get the role for a given principal. Open to all (no sensitive data beyond role).
+     */
+    getCurrentUserRole(id: Principal): Promise<UserRoleResult>;
+    getExercise(id: string): Promise<ExerciseResult>;
+    getFlightLog(id: bigint): Promise<FlightLogResult>;
+    getInstructor(id: string): Promise<InstructorResult>;
     getInstructorReport(instructorId: string): Promise<[number, bigint]>;
+    getStudent(id: string): Promise<StudentResult>;
     getStudentTotalHours(studentId: string): Promise<number>;
-    updateAircraft(id: string, registration: string): Promise<void>;
-    updateExercise(id: string, name: string, description: string): Promise<void>;
-    updateFlightLog(id: bigint, date: string, studentId: string, instructorId: string, aircraftId: string, exerciseId: string, flightType: string, landingType: string, landingCount: bigint, takeoffTime: string, landingTime: string): Promise<void>;
-    updateInstructor(id: string, name: string): Promise<void>;
-    updateStudent(id: string, name: string): Promise<void>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
+    isCallerAdmin(): Promise<boolean>;
+    partialUpdateAircraft(id: string, registration: string | null): Promise<AircraftResult>;
+    partialUpdateExercise(id: string, name: string | null, description: string | null): Promise<ExerciseResult>;
+    partialUpdateFlightLog(id: bigint, date: string | null, studentId: string | null, instructorId: string | null, aircraftId: string | null, exerciseId: string | null, flightType: string | null, landingType: string | null, landingCount: bigint | null, takeoffTime: string | null, landingTime: string | null, aircraftHours: number | null, sunriseTime: string | null, sunsetTime: string | null): Promise<FlightLogResult>;
+    partialUpdateInstructor(id: string, name: string | null): Promise<InstructorResult>;
+    partialUpdateStudent(id: string, name: string | null): Promise<StudentResult>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    updateAircraft(id: string, registration: string): Promise<AircraftResult>;
+    /**
+     * / Update the role of an existing user. Admin-only.
+     */
+    updateCurrentUserRole(id: Principal, newRole: Role): Promise<UpdateRoleResult>;
+    updateExercise(id: string, name: string, description: string): Promise<ExerciseResult>;
+    updateFlightLog(id: bigint, date: string, studentId: string, instructorId: string, aircraftId: string, exerciseId: string, flightType: string, landingType: string, landingCount: bigint, takeoffTime: string, landingTime: string, aircraftHours: number, sunriseTime: string, sunsetTime: string): Promise<FlightLogResult>;
+    updateInstructor(id: string, name: string): Promise<InstructorResult>;
+    updateStudent(id: string, name: string): Promise<StudentResult>;
 }
+import type { Aircraft as _Aircraft, AircraftResult as _AircraftResult, Exercise as _Exercise, ExerciseResult as _ExerciseResult, FlightLog as _FlightLog, FlightLogResult as _FlightLogResult, Instructor as _Instructor, InstructorResult as _InstructorResult, Role as _Role, Student as _Student, StudentResult as _StudentResult, SuccessResult as _SuccessResult, UpdateRoleResult as _UpdateRoleResult, User as _User, UserProfile as _UserProfile, UserRole as _UserRole, UserRoleResult as _UserRoleResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async createAircraft(arg0: string, arg1: string): Promise<void> {
+    async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor._initializeAccessControlWithSecret(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor._initializeAccessControlWithSecret(arg0);
+            return result;
+        }
+    }
+    async addOrUpdateUser(arg0: Principal, arg1: string, arg2: Role): Promise<SuccessResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addOrUpdateUser(arg0, arg1, to_candid_Role_n1(this._uploadFile, this._downloadFile, arg2));
+                return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addOrUpdateUser(arg0, arg1, to_candid_Role_n1(this._uploadFile, this._downloadFile, arg2));
+            return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n5(this._uploadFile, this._downloadFile, arg1));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n5(this._uploadFile, this._downloadFile, arg1));
+            return result;
+        }
+    }
+    async createAircraft(arg0: string, arg1: string): Promise<Aircraft> {
         if (this.processError) {
             try {
                 const result = await this.actor.createAircraft(arg0, arg1);
@@ -161,7 +305,7 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createExercise(arg0: string, arg1: string, arg2: string): Promise<void> {
+    async createExercise(arg0: string, arg1: string, arg2: string): Promise<Exercise> {
         if (this.processError) {
             try {
                 const result = await this.actor.createExercise(arg0, arg1, arg2);
@@ -175,21 +319,21 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createFlightLog(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: bigint, arg8: string, arg9: string): Promise<bigint> {
+    async createFlightLog(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: bigint, arg8: string, arg9: string, arg10: number, arg11: string, arg12: string): Promise<FlightLog> {
         if (this.processError) {
             try {
-                const result = await this.actor.createFlightLog(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+                const result = await this.actor.createFlightLog(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.createFlightLog(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+            const result = await this.actor.createFlightLog(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
             return result;
         }
     }
-    async createInstructor(arg0: string, arg1: string): Promise<void> {
+    async createInstructor(arg0: string, arg1: string): Promise<Instructor> {
         if (this.processError) {
             try {
                 const result = await this.actor.createInstructor(arg0, arg1);
@@ -203,7 +347,7 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createStudent(arg0: string, arg1: string): Promise<void> {
+    async createStudent(arg0: string, arg1: string): Promise<Student> {
         if (this.processError) {
             try {
                 const result = await this.actor.createStudent(arg0, arg1);
@@ -217,74 +361,74 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async deleteAircraft(arg0: string): Promise<void> {
+    async deleteAircraft(arg0: string): Promise<SuccessResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteAircraft(arg0);
-                return result;
+                return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteAircraft(arg0);
-            return result;
+            return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteExercise(arg0: string): Promise<void> {
+    async deleteExercise(arg0: string): Promise<SuccessResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteExercise(arg0);
-                return result;
+                return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteExercise(arg0);
-            return result;
+            return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteFlightLog(arg0: bigint): Promise<void> {
+    async deleteFlightLog(arg0: bigint): Promise<SuccessResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteFlightLog(arg0);
-                return result;
+                return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteFlightLog(arg0);
-            return result;
+            return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteInstructor(arg0: string): Promise<void> {
+    async deleteInstructor(arg0: string): Promise<SuccessResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteInstructor(arg0);
-                return result;
+                return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteInstructor(arg0);
-            return result;
+            return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
         }
     }
-    async deleteStudent(arg0: string): Promise<void> {
+    async deleteStudent(arg0: string): Promise<SuccessResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.deleteStudent(arg0);
-                return result;
+                return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.deleteStudent(arg0);
-            return result;
+            return from_candid_SuccessResult_n3(this._uploadFile, this._downloadFile, result);
         }
     }
     async exportFlightLogsAsCSV(): Promise<string> {
@@ -299,6 +443,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.exportFlightLogsAsCSV();
             return result;
+        }
+    }
+    async getAircraft(arg0: string): Promise<AircraftResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAircraft(arg0);
+                return from_candid_AircraftResult_n6(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAircraft(arg0);
+            return from_candid_AircraftResult_n6(this._uploadFile, this._downloadFile, result);
         }
     }
     async getAllAircraft(): Promise<Array<Aircraft>> {
@@ -357,6 +515,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getAllRegisteredUsers(): Promise<Array<User>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllRegisteredUsers();
+                return from_candid_vec_n8(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllRegisteredUsers();
+            return from_candid_vec_n8(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getAllStudents(): Promise<Array<Student>> {
         if (this.processError) {
             try {
@@ -369,6 +541,90 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getAllStudents();
             return result;
+        }
+    }
+    async getCallerUserProfile(): Promise<UserProfile | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCallerUserProfile();
+                return from_candid_opt_n13(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCallerUserProfile();
+            return from_candid_opt_n13(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCallerUserRole(): Promise<UserRole> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCallerUserRole();
+                return from_candid_UserRole_n14(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCallerUserRole();
+            return from_candid_UserRole_n14(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCurrentUserRole(arg0: Principal): Promise<UserRoleResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCurrentUserRole(arg0);
+                return from_candid_UserRoleResult_n15(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCurrentUserRole(arg0);
+            return from_candid_UserRoleResult_n15(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getExercise(arg0: string): Promise<ExerciseResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getExercise(arg0);
+                return from_candid_ExerciseResult_n17(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getExercise(arg0);
+            return from_candid_ExerciseResult_n17(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getFlightLog(arg0: bigint): Promise<FlightLogResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getFlightLog(arg0);
+                return from_candid_FlightLogResult_n19(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getFlightLog(arg0);
+            return from_candid_FlightLogResult_n19(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getInstructor(arg0: string): Promise<InstructorResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getInstructor(arg0);
+                return from_candid_InstructorResult_n21(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getInstructor(arg0);
+            return from_candid_InstructorResult_n21(this._uploadFile, this._downloadFile, result);
         }
     }
     async getInstructorReport(arg0: string): Promise<[number, bigint]> {
@@ -391,6 +647,20 @@ export class Backend implements backendInterface {
             ];
         }
     }
+    async getStudent(arg0: string): Promise<StudentResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getStudent(arg0);
+                return from_candid_StudentResult_n23(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getStudent(arg0);
+            return from_candid_StudentResult_n23(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getStudentTotalHours(arg0: string): Promise<number> {
         if (this.processError) {
             try {
@@ -405,76 +675,433 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updateAircraft(arg0: string, arg1: string): Promise<void> {
+    async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserProfile(arg0);
+                return from_candid_opt_n13(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserProfile(arg0);
+            return from_candid_opt_n13(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async isCallerAdmin(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isCallerAdmin();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isCallerAdmin();
+            return result;
+        }
+    }
+    async partialUpdateAircraft(arg0: string, arg1: string | null): Promise<AircraftResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.partialUpdateAircraft(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_AircraftResult_n6(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.partialUpdateAircraft(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_AircraftResult_n6(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async partialUpdateExercise(arg0: string, arg1: string | null, arg2: string | null): Promise<ExerciseResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.partialUpdateExercise(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg2));
+                return from_candid_ExerciseResult_n17(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.partialUpdateExercise(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg2));
+            return from_candid_ExerciseResult_n17(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async partialUpdateFlightLog(arg0: bigint, arg1: string | null, arg2: string | null, arg3: string | null, arg4: string | null, arg5: string | null, arg6: string | null, arg7: string | null, arg8: bigint | null, arg9: string | null, arg10: string | null, arg11: number | null, arg12: string | null, arg13: string | null): Promise<FlightLogResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.partialUpdateFlightLog(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg2), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg7), to_candid_opt_n26(this._uploadFile, this._downloadFile, arg8), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n27(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg13));
+                return from_candid_FlightLogResult_n19(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.partialUpdateFlightLog(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg2), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg7), to_candid_opt_n26(this._uploadFile, this._downloadFile, arg8), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n27(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n25(this._uploadFile, this._downloadFile, arg13));
+            return from_candid_FlightLogResult_n19(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async partialUpdateInstructor(arg0: string, arg1: string | null): Promise<InstructorResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.partialUpdateInstructor(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_InstructorResult_n21(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.partialUpdateInstructor(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_InstructorResult_n21(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async partialUpdateStudent(arg0: string, arg1: string | null): Promise<StudentResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.partialUpdateStudent(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_StudentResult_n23(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.partialUpdateStudent(arg0, to_candid_opt_n25(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_StudentResult_n23(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveCallerUserProfile(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveCallerUserProfile(arg0);
+            return result;
+        }
+    }
+    async updateAircraft(arg0: string, arg1: string): Promise<AircraftResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateAircraft(arg0, arg1);
-                return result;
+                return from_candid_AircraftResult_n6(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateAircraft(arg0, arg1);
-            return result;
+            return from_candid_AircraftResult_n6(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateExercise(arg0: string, arg1: string, arg2: string): Promise<void> {
+    async updateCurrentUserRole(arg0: Principal, arg1: Role): Promise<UpdateRoleResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateCurrentUserRole(arg0, to_candid_Role_n1(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_UpdateRoleResult_n28(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateCurrentUserRole(arg0, to_candid_Role_n1(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_UpdateRoleResult_n28(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateExercise(arg0: string, arg1: string, arg2: string): Promise<ExerciseResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateExercise(arg0, arg1, arg2);
-                return result;
+                return from_candid_ExerciseResult_n17(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateExercise(arg0, arg1, arg2);
-            return result;
+            return from_candid_ExerciseResult_n17(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateFlightLog(arg0: bigint, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: bigint, arg9: string, arg10: string): Promise<void> {
+    async updateFlightLog(arg0: bigint, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string, arg7: string, arg8: bigint, arg9: string, arg10: string, arg11: number, arg12: string, arg13: string): Promise<FlightLogResult> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateFlightLog(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
-                return result;
+                const result = await this.actor.updateFlightLog(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
+                return from_candid_FlightLogResult_n19(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateFlightLog(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
-            return result;
+            const result = await this.actor.updateFlightLog(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
+            return from_candid_FlightLogResult_n19(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateInstructor(arg0: string, arg1: string): Promise<void> {
+    async updateInstructor(arg0: string, arg1: string): Promise<InstructorResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateInstructor(arg0, arg1);
-                return result;
+                return from_candid_InstructorResult_n21(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateInstructor(arg0, arg1);
-            return result;
+            return from_candid_InstructorResult_n21(this._uploadFile, this._downloadFile, result);
         }
     }
-    async updateStudent(arg0: string, arg1: string): Promise<void> {
+    async updateStudent(arg0: string, arg1: string): Promise<StudentResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.updateStudent(arg0, arg1);
-                return result;
+                return from_candid_StudentResult_n23(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.updateStudent(arg0, arg1);
-            return result;
+            return from_candid_StudentResult_n23(this._uploadFile, this._downloadFile, result);
         }
     }
+}
+function from_candid_AircraftResult_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AircraftResult): AircraftResult {
+    return from_candid_variant_n7(_uploadFile, _downloadFile, value);
+}
+function from_candid_ExerciseResult_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ExerciseResult): ExerciseResult {
+    return from_candid_variant_n18(_uploadFile, _downloadFile, value);
+}
+function from_candid_FlightLogResult_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _FlightLogResult): FlightLogResult {
+    return from_candid_variant_n20(_uploadFile, _downloadFile, value);
+}
+function from_candid_InstructorResult_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _InstructorResult): InstructorResult {
+    return from_candid_variant_n22(_uploadFile, _downloadFile, value);
+}
+function from_candid_Role_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Role): Role {
+    return from_candid_variant_n12(_uploadFile, _downloadFile, value);
+}
+function from_candid_StudentResult_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _StudentResult): StudentResult {
+    return from_candid_variant_n24(_uploadFile, _downloadFile, value);
+}
+function from_candid_SuccessResult_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SuccessResult): SuccessResult {
+    return from_candid_variant_n4(_uploadFile, _downloadFile, value);
+}
+function from_candid_UpdateRoleResult_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UpdateRoleResult): UpdateRoleResult {
+    return from_candid_variant_n29(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRoleResult_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRoleResult): UserRoleResult {
+    return from_candid_variant_n16(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n12(_uploadFile, _downloadFile, value);
+}
+function from_candid_User_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _User): User {
+    return from_candid_record_n10(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_record_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    principal: Principal;
+    name: string;
+    role: _Role;
+}): {
+    principal: Principal;
+    name: string;
+    role: Role;
+} {
+    return {
+        principal: value.principal,
+        name: value.name,
+        role: from_candid_Role_n11(_uploadFile, _downloadFile, value.role)
+    };
+}
+function from_candid_variant_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    admin: null;
+} | {
+    user: null;
+} | {
+    guest: null;
+}): UserRole {
+    return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
+}
+function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _Role;
+} | {
+    error: string;
+}): {
+    __kind__: "ok";
+    ok: Role;
+} | {
+    __kind__: "error";
+    error: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: from_candid_Role_n11(_uploadFile, _downloadFile, value.ok)
+    } : "error" in value ? {
+        __kind__: "error",
+        error: value.error
+    } : value;
+}
+function from_candid_variant_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _Exercise;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: Exercise;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _FlightLog;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: FlightLog;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _Instructor;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: Instructor;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _Student;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: Student;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_variant_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: null;
+} | {
+    error: string;
+}): {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "error";
+    error: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "error" in value ? {
+        __kind__: "error",
+        error: value.error
+    } : value;
+}
+function from_candid_variant_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: null;
+}): SuccessResult {
+    return "ok" in value ? SuccessResult.ok : value;
+}
+function from_candid_variant_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ok: _Aircraft;
+} | {
+    err: string;
+}): {
+    __kind__: "ok";
+    ok: Aircraft;
+} | {
+    __kind__: "err";
+    err: string;
+} {
+    return "ok" in value ? {
+        __kind__: "ok",
+        ok: value.ok
+    } : "err" in value ? {
+        __kind__: "err",
+        err: value.err
+    } : value;
+}
+function from_candid_vec_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_User>): Array<User> {
+    return value.map((x)=>from_candid_User_n9(_uploadFile, _downloadFile, x));
+}
+function to_candid_Role_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Role): _Role {
+    return to_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_UserRole_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
+    return to_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_opt_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
+    return value === null ? candid_none() : candid_some(value);
+}
+function to_candid_opt_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: bigint | null): [] | [bigint] {
+    return value === null ? candid_none() : candid_some(value);
+}
+function to_candid_opt_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: number | null): [] | [number] {
+    return value === null ? candid_none() : candid_some(value);
+}
+function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
+    admin: null;
+} | {
+    user: null;
+} | {
+    guest: null;
+} {
+    return value == UserRole.admin ? {
+        admin: null
+    } : value == UserRole.user ? {
+        user: null
+    } : value == UserRole.guest ? {
+        guest: null
+    } : value;
 }
 export interface CreateActorOptions {
     agent?: Agent;

@@ -11,30 +11,66 @@ import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
 export interface Aircraft { 'id' : string, 'registration' : string }
+export type AircraftResult = { 'ok' : Aircraft } |
+  { 'err' : string };
 export interface Exercise {
   'id' : string,
   'name' : string,
   'description' : string,
 }
+export type ExerciseResult = { 'ok' : Exercise } |
+  { 'err' : string };
 export interface FlightLog {
   'id' : bigint,
   'studentId' : string,
   'exerciseId' : string,
   'totalHours' : number,
   'date' : string,
+  'sunriseTime' : string,
   'flightType' : string,
+  'sunsetTime' : string,
   'instructorId' : string,
+  'aircraftHours' : number,
   'aircraftId' : string,
   'takeoffTime' : string,
   'landingTime' : string,
   'landingType' : string,
   'landingCount' : bigint,
 }
+export type FlightLogResult = { 'ok' : FlightLog } |
+  { 'err' : string };
 export interface Instructor { 'id' : string, 'name' : string }
+export type InstructorResult = { 'ok' : Instructor } |
+  { 'err' : string };
+export type Role = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
 export interface Student { 'id' : string, 'name' : string }
+export type StudentResult = { 'ok' : Student } |
+  { 'err' : string };
+export type SuccessResult = { 'ok' : null };
+export type UpdateRoleResult = { 'ok' : null } |
+  { 'error' : string };
+export interface User {
+  'principal' : Principal,
+  'name' : string,
+  'role' : Role,
+}
+export interface UserProfile { 'name' : string }
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
+export type UserRoleResult = { 'ok' : Role } |
+  { 'error' : string };
 export interface _SERVICE {
-  'createAircraft' : ActorMethod<[string, string], undefined>,
-  'createExercise' : ActorMethod<[string, string, string], undefined>,
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  /**
+   * / Register or update a user. Admin-only.
+   */
+  'addOrUpdateUser' : ActorMethod<[Principal, string, Role], SuccessResult>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'createAircraft' : ActorMethod<[string, string], Aircraft>,
+  'createExercise' : ActorMethod<[string, string, string], Exercise>,
   'createFlightLog' : ActorMethod<
     [
       string,
@@ -47,26 +83,83 @@ export interface _SERVICE {
       bigint,
       string,
       string,
+      number,
+      string,
+      string,
     ],
-    bigint
+    FlightLog
   >,
-  'createInstructor' : ActorMethod<[string, string], undefined>,
-  'createStudent' : ActorMethod<[string, string], undefined>,
-  'deleteAircraft' : ActorMethod<[string], undefined>,
-  'deleteExercise' : ActorMethod<[string], undefined>,
-  'deleteFlightLog' : ActorMethod<[bigint], undefined>,
-  'deleteInstructor' : ActorMethod<[string], undefined>,
-  'deleteStudent' : ActorMethod<[string], undefined>,
+  'createInstructor' : ActorMethod<[string, string], Instructor>,
+  'createStudent' : ActorMethod<[string, string], Student>,
+  'deleteAircraft' : ActorMethod<[string], SuccessResult>,
+  'deleteExercise' : ActorMethod<[string], SuccessResult>,
+  'deleteFlightLog' : ActorMethod<[bigint], SuccessResult>,
+  'deleteInstructor' : ActorMethod<[string], SuccessResult>,
+  'deleteStudent' : ActorMethod<[string], SuccessResult>,
   'exportFlightLogsAsCSV' : ActorMethod<[], string>,
+  'getAircraft' : ActorMethod<[string], AircraftResult>,
   'getAllAircraft' : ActorMethod<[], Array<Aircraft>>,
   'getAllExercises' : ActorMethod<[], Array<Exercise>>,
   'getAllFlightLogs' : ActorMethod<[], Array<FlightLog>>,
   'getAllInstructors' : ActorMethod<[], Array<Instructor>>,
+  /**
+   * / Return all registered users. Admin-only (contains sensitive role/principal data).
+   */
+  'getAllRegisteredUsers' : ActorMethod<[], Array<User>>,
   'getAllStudents' : ActorMethod<[], Array<Student>>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  /**
+   * / Get the role for a given principal. Open to all (no sensitive data beyond role).
+   */
+  'getCurrentUserRole' : ActorMethod<[Principal], UserRoleResult>,
+  'getExercise' : ActorMethod<[string], ExerciseResult>,
+  'getFlightLog' : ActorMethod<[bigint], FlightLogResult>,
+  'getInstructor' : ActorMethod<[string], InstructorResult>,
   'getInstructorReport' : ActorMethod<[string], [number, bigint]>,
+  'getStudent' : ActorMethod<[string], StudentResult>,
   'getStudentTotalHours' : ActorMethod<[string], number>,
-  'updateAircraft' : ActorMethod<[string, string], undefined>,
-  'updateExercise' : ActorMethod<[string, string, string], undefined>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'partialUpdateAircraft' : ActorMethod<
+    [string, [] | [string]],
+    AircraftResult
+  >,
+  'partialUpdateExercise' : ActorMethod<
+    [string, [] | [string], [] | [string]],
+    ExerciseResult
+  >,
+  'partialUpdateFlightLog' : ActorMethod<
+    [
+      bigint,
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      [] | [string],
+      [] | [number],
+      [] | [string],
+      [] | [string],
+    ],
+    FlightLogResult
+  >,
+  'partialUpdateInstructor' : ActorMethod<
+    [string, [] | [string]],
+    InstructorResult
+  >,
+  'partialUpdateStudent' : ActorMethod<[string, [] | [string]], StudentResult>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'updateAircraft' : ActorMethod<[string, string], AircraftResult>,
+  /**
+   * / Update the role of an existing user. Admin-only.
+   */
+  'updateCurrentUserRole' : ActorMethod<[Principal, Role], UpdateRoleResult>,
+  'updateExercise' : ActorMethod<[string, string, string], ExerciseResult>,
   'updateFlightLog' : ActorMethod<
     [
       bigint,
@@ -80,11 +173,14 @@ export interface _SERVICE {
       bigint,
       string,
       string,
+      number,
+      string,
+      string,
     ],
-    undefined
+    FlightLogResult
   >,
-  'updateInstructor' : ActorMethod<[string, string], undefined>,
-  'updateStudent' : ActorMethod<[string, string], undefined>,
+  'updateInstructor' : ActorMethod<[string, string], InstructorResult>,
+  'updateStudent' : ActorMethod<[string, string], StudentResult>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

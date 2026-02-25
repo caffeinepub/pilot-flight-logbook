@@ -1,34 +1,76 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T09:32:15.559Z",
+  "generatedAt": "2026-02-25T00:50:26.052Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 4,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-22",
-        "summary": "Update the ExportButton component to generate the CSV filename using 'Pilot_Flight_Logbook' as the base name instead of the current filename, formatted as 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' where YYYY-MM-DD is the current date",
+        "id": "REQ-37",
+        "summary": "Add backend support for user management: store a registry of users (principal, name, role) in stable storage where role can be 'Admin', 'User', or 'Guest'. Provide methods: registerOrUpdateUser(principal, name, role), getAllUsers() returning all registered users, updateUserRole(principal, newRole) returning success/error, and getCurrentUserRole(principal) returning the role for a given principal. Ensure the last admin cannot be demoted or removed (return an error if the operation would leave zero admins).",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-38",
+        "summary": "Create a useAdminPanel React Query hook in frontend/src/hooks/useAdminPanel.ts that: fetches all users via getAllUsers backend method, fetches entity counts (students, instructors, aircraft, exercises) by reusing existing query data, provides an updateUserRole mutation that calls the backend updateUserRole method and invalidates the users query on success, and exposes a helper to check if the currently authenticated principal has the 'Admin' role.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/ExportButton.tsx"
+          "frontend/src/hooks/useAdminPanel.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/ExportButton.tsx"
+          "frontend/src/hooks/useAdminPanel.ts"
+        ]
+      },
+      {
+        "id": "REQ-39",
+        "summary": "Create a new AdminPanel component at frontend/src/components/AdminPanel.tsx that renders: (1) a System Overview section with four dashboard stat cards showing counts of Students, Instructors, Aircraft, and Exercises; (2) a Quick Actions section with navigation links/buttons to the Manage Entities tabs for each entity type; (3) a User Management section displaying a table of all registered users with columns for Name, Principal (truncated), and Role, where the Role column shows a dropdown (Admin/User/Guest) that triggers the updateUserRole mutation on change, with toast notifications for success and error, and a guard preventing demotion of the last admin.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/AdminPanel.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/AdminPanel.tsx"
+        ]
+      },
+      {
+        "id": "REQ-40",
+        "summary": "Add an 'Admin' tab to the root App.tsx tab layout (alongside Flight Entry, Flight Logs, Reports, Export, Manage) that renders the AdminPanel component. The Admin tab must only be visible in the navigation when the currently authenticated user has the 'Admin' role. Use a shield or lock icon for the tab. Non-admin users should not see the tab in the sidebar/tab bar.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/authorization/MixinAuthorization.mo",
+    "backend/authorization/access-control.mo",
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/ExportButton.tsx",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/AdminPanel.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useAdminPanel.ts",
+    "frontend/src/utils/urlParams.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -10,7 +10,7 @@ export default function InstructorReport() {
     <Card>
       <CardHeader>
         <CardTitle>Instructor Report</CardTitle>
-        <CardDescription>Total flight hours and flight count by instructor.</CardDescription>
+        <CardDescription>Total flight hours, aircraft hours, and flight count by instructor.</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -27,6 +27,7 @@ export default function InstructorReport() {
               <TableRow>
                 <TableHead>Instructor Name</TableHead>
                 <TableHead className="text-right">Total Hours</TableHead>
+                <TableHead className="text-right">Total Aircraft Hours</TableHead>
                 <TableHead className="text-right">Flight Count</TableHead>
               </TableRow>
             </TableHeader>
@@ -35,6 +36,7 @@ export default function InstructorReport() {
                 <TableRow key={item.instructorId}>
                   <TableCell className="font-medium">{item.instructorName}</TableCell>
                   <TableCell className="text-right">{item.totalHours.toFixed(2)}</TableCell>
+                  <TableCell className="text-right">{item.totalAircraftHours.toFixed(1)}</TableCell>
                   <TableCell className="text-right">{item.flightCount.toString()}</TableCell>
                 </TableRow>
               ))}

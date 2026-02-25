@@ -69,9 +69,136 @@ export function useCreateEntity(entityType: 'student' | 'instructor' | 'aircraft
       }
     },
     onSuccess: () => {
-      // Invalidate the correct query key
       const queryKey = entityType === 'aircraft' ? 'aircraft' : `${entityType}s`;
       queryClient.invalidateQueries({ queryKey: [queryKey] });
+    },
+  });
+}
+
+export function useUpdateStudent() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, name }: { id: string; name: string }) => {
+      if (!actor) throw new Error('Actor not initialized');
+      const result = await actor.updateStudent(id, name);
+      if (result.__kind__ === 'err') throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+    },
+  });
+}
+
+export function useDeleteStudent() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (!actor) throw new Error('Actor not initialized');
+      await actor.deleteStudent(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+    },
+  });
+}
+
+export function useUpdateInstructor() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, name }: { id: string; name: string }) => {
+      if (!actor) throw new Error('Actor not initialized');
+      const result = await actor.updateInstructor(id, name);
+      if (result.__kind__ === 'err') throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['instructors'] });
+    },
+  });
+}
+
+export function useDeleteInstructor() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (!actor) throw new Error('Actor not initialized');
+      await actor.deleteInstructor(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['instructors'] });
+    },
+  });
+}
+
+export function useUpdateAircraft() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, registration }: { id: string; registration: string }) => {
+      if (!actor) throw new Error('Actor not initialized');
+      const result = await actor.updateAircraft(id, registration);
+      if (result.__kind__ === 'err') throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['aircraft'] });
+    },
+  });
+}
+
+export function useDeleteAircraft() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (!actor) throw new Error('Actor not initialized');
+      await actor.deleteAircraft(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['aircraft'] });
+    },
+  });
+}
+
+export function useUpdateExercise() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, name, description }: { id: string; name: string; description: string }) => {
+      if (!actor) throw new Error('Actor not initialized');
+      const result = await actor.updateExercise(id, name, description);
+      if (result.__kind__ === 'err') throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['exercises'] });
+    },
+  });
+}
+
+export function useDeleteExercise() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (!actor) throw new Error('Actor not initialized');
+      await actor.deleteExercise(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['exercises'] });
     },
   });
 }

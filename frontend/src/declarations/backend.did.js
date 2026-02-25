@@ -8,6 +8,17 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const Role = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
+});
+export const SuccessResult = IDL.Variant({ 'ok' : IDL.Null });
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
+});
 export const Aircraft = IDL.Record({
   'id' : IDL.Text,
   'registration' : IDL.Text,
@@ -23,8 +34,11 @@ export const FlightLog = IDL.Record({
   'exerciseId' : IDL.Text,
   'totalHours' : IDL.Float64,
   'date' : IDL.Text,
+  'sunriseTime' : IDL.Text,
   'flightType' : IDL.Text,
+  'sunsetTime' : IDL.Text,
   'instructorId' : IDL.Text,
+  'aircraftHours' : IDL.Float64,
   'aircraftId' : IDL.Text,
   'takeoffTime' : IDL.Text,
   'landingTime' : IDL.Text,
@@ -33,10 +47,45 @@ export const FlightLog = IDL.Record({
 });
 export const Instructor = IDL.Record({ 'id' : IDL.Text, 'name' : IDL.Text });
 export const Student = IDL.Record({ 'id' : IDL.Text, 'name' : IDL.Text });
+export const AircraftResult = IDL.Variant({
+  'ok' : Aircraft,
+  'err' : IDL.Text,
+});
+export const User = IDL.Record({
+  'principal' : IDL.Principal,
+  'name' : IDL.Text,
+  'role' : Role,
+});
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const UserRoleResult = IDL.Variant({ 'ok' : Role, 'error' : IDL.Text });
+export const ExerciseResult = IDL.Variant({
+  'ok' : Exercise,
+  'err' : IDL.Text,
+});
+export const FlightLogResult = IDL.Variant({
+  'ok' : FlightLog,
+  'err' : IDL.Text,
+});
+export const InstructorResult = IDL.Variant({
+  'ok' : Instructor,
+  'err' : IDL.Text,
+});
+export const StudentResult = IDL.Variant({ 'ok' : Student, 'err' : IDL.Text });
+export const UpdateRoleResult = IDL.Variant({
+  'ok' : IDL.Null,
+  'error' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
-  'createAircraft' : IDL.Func([IDL.Text, IDL.Text], [], []),
-  'createExercise' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addOrUpdateUser' : IDL.Func(
+      [IDL.Principal, IDL.Text, Role],
+      [SuccessResult],
+      [],
+    ),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'createAircraft' : IDL.Func([IDL.Text, IDL.Text], [Aircraft], []),
+  'createExercise' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [Exercise], []),
   'createFlightLog' : IDL.Func(
       [
         IDL.Text,
@@ -49,31 +98,99 @@ export const idlService = IDL.Service({
         IDL.Nat,
         IDL.Text,
         IDL.Text,
+        IDL.Float64,
+        IDL.Text,
+        IDL.Text,
       ],
-      [IDL.Nat],
+      [FlightLog],
       [],
     ),
-  'createInstructor' : IDL.Func([IDL.Text, IDL.Text], [], []),
-  'createStudent' : IDL.Func([IDL.Text, IDL.Text], [], []),
-  'deleteAircraft' : IDL.Func([IDL.Text], [], []),
-  'deleteExercise' : IDL.Func([IDL.Text], [], []),
-  'deleteFlightLog' : IDL.Func([IDL.Nat], [], []),
-  'deleteInstructor' : IDL.Func([IDL.Text], [], []),
-  'deleteStudent' : IDL.Func([IDL.Text], [], []),
+  'createInstructor' : IDL.Func([IDL.Text, IDL.Text], [Instructor], []),
+  'createStudent' : IDL.Func([IDL.Text, IDL.Text], [Student], []),
+  'deleteAircraft' : IDL.Func([IDL.Text], [SuccessResult], []),
+  'deleteExercise' : IDL.Func([IDL.Text], [SuccessResult], []),
+  'deleteFlightLog' : IDL.Func([IDL.Nat], [SuccessResult], []),
+  'deleteInstructor' : IDL.Func([IDL.Text], [SuccessResult], []),
+  'deleteStudent' : IDL.Func([IDL.Text], [SuccessResult], []),
   'exportFlightLogsAsCSV' : IDL.Func([], [IDL.Text], ['query']),
+  'getAircraft' : IDL.Func([IDL.Text], [AircraftResult], ['query']),
   'getAllAircraft' : IDL.Func([], [IDL.Vec(Aircraft)], ['query']),
   'getAllExercises' : IDL.Func([], [IDL.Vec(Exercise)], ['query']),
   'getAllFlightLogs' : IDL.Func([], [IDL.Vec(FlightLog)], ['query']),
   'getAllInstructors' : IDL.Func([], [IDL.Vec(Instructor)], ['query']),
+  'getAllRegisteredUsers' : IDL.Func([], [IDL.Vec(User)], ['query']),
   'getAllStudents' : IDL.Func([], [IDL.Vec(Student)], ['query']),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getCurrentUserRole' : IDL.Func([IDL.Principal], [UserRoleResult], ['query']),
+  'getExercise' : IDL.Func([IDL.Text], [ExerciseResult], ['query']),
+  'getFlightLog' : IDL.Func([IDL.Nat], [FlightLogResult], ['query']),
+  'getInstructor' : IDL.Func([IDL.Text], [InstructorResult], ['query']),
   'getInstructorReport' : IDL.Func(
       [IDL.Text],
       [IDL.Float64, IDL.Nat],
       ['query'],
     ),
+  'getStudent' : IDL.Func([IDL.Text], [StudentResult], ['query']),
   'getStudentTotalHours' : IDL.Func([IDL.Text], [IDL.Float64], ['query']),
-  'updateAircraft' : IDL.Func([IDL.Text, IDL.Text], [], []),
-  'updateExercise' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(UserProfile)],
+      ['query'],
+    ),
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'partialUpdateAircraft' : IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text)],
+      [AircraftResult],
+      [],
+    ),
+  'partialUpdateExercise' : IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
+      [ExerciseResult],
+      [],
+    ),
+  'partialUpdateFlightLog' : IDL.Func(
+      [
+        IDL.Nat,
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Float64),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+      ],
+      [FlightLogResult],
+      [],
+    ),
+  'partialUpdateInstructor' : IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text)],
+      [InstructorResult],
+      [],
+    ),
+  'partialUpdateStudent' : IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text)],
+      [StudentResult],
+      [],
+    ),
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'updateAircraft' : IDL.Func([IDL.Text, IDL.Text], [AircraftResult], []),
+  'updateCurrentUserRole' : IDL.Func(
+      [IDL.Principal, Role],
+      [UpdateRoleResult],
+      [],
+    ),
+  'updateExercise' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text],
+      [ExerciseResult],
+      [],
+    ),
   'updateFlightLog' : IDL.Func(
       [
         IDL.Nat,
@@ -87,17 +204,31 @@ export const idlService = IDL.Service({
         IDL.Nat,
         IDL.Text,
         IDL.Text,
+        IDL.Float64,
+        IDL.Text,
+        IDL.Text,
       ],
-      [],
+      [FlightLogResult],
       [],
     ),
-  'updateInstructor' : IDL.Func([IDL.Text, IDL.Text], [], []),
-  'updateStudent' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'updateInstructor' : IDL.Func([IDL.Text, IDL.Text], [InstructorResult], []),
+  'updateStudent' : IDL.Func([IDL.Text, IDL.Text], [StudentResult], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const Role = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
+  });
+  const SuccessResult = IDL.Variant({ 'ok' : IDL.Null });
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
+  });
   const Aircraft = IDL.Record({ 'id' : IDL.Text, 'registration' : IDL.Text });
   const Exercise = IDL.Record({
     'id' : IDL.Text,
@@ -110,8 +241,11 @@ export const idlFactory = ({ IDL }) => {
     'exerciseId' : IDL.Text,
     'totalHours' : IDL.Float64,
     'date' : IDL.Text,
+    'sunriseTime' : IDL.Text,
     'flightType' : IDL.Text,
+    'sunsetTime' : IDL.Text,
     'instructorId' : IDL.Text,
+    'aircraftHours' : IDL.Float64,
     'aircraftId' : IDL.Text,
     'takeoffTime' : IDL.Text,
     'landingTime' : IDL.Text,
@@ -120,10 +254,30 @@ export const idlFactory = ({ IDL }) => {
   });
   const Instructor = IDL.Record({ 'id' : IDL.Text, 'name' : IDL.Text });
   const Student = IDL.Record({ 'id' : IDL.Text, 'name' : IDL.Text });
+  const AircraftResult = IDL.Variant({ 'ok' : Aircraft, 'err' : IDL.Text });
+  const User = IDL.Record({
+    'principal' : IDL.Principal,
+    'name' : IDL.Text,
+    'role' : Role,
+  });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const UserRoleResult = IDL.Variant({ 'ok' : Role, 'error' : IDL.Text });
+  const ExerciseResult = IDL.Variant({ 'ok' : Exercise, 'err' : IDL.Text });
+  const FlightLogResult = IDL.Variant({ 'ok' : FlightLog, 'err' : IDL.Text });
+  const InstructorResult = IDL.Variant({ 'ok' : Instructor, 'err' : IDL.Text });
+  const StudentResult = IDL.Variant({ 'ok' : Student, 'err' : IDL.Text });
+  const UpdateRoleResult = IDL.Variant({ 'ok' : IDL.Null, 'error' : IDL.Text });
   
   return IDL.Service({
-    'createAircraft' : IDL.Func([IDL.Text, IDL.Text], [], []),
-    'createExercise' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addOrUpdateUser' : IDL.Func(
+        [IDL.Principal, IDL.Text, Role],
+        [SuccessResult],
+        [],
+      ),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'createAircraft' : IDL.Func([IDL.Text, IDL.Text], [Aircraft], []),
+    'createExercise' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [Exercise], []),
     'createFlightLog' : IDL.Func(
         [
           IDL.Text,
@@ -136,31 +290,103 @@ export const idlFactory = ({ IDL }) => {
           IDL.Nat,
           IDL.Text,
           IDL.Text,
+          IDL.Float64,
+          IDL.Text,
+          IDL.Text,
         ],
-        [IDL.Nat],
+        [FlightLog],
         [],
       ),
-    'createInstructor' : IDL.Func([IDL.Text, IDL.Text], [], []),
-    'createStudent' : IDL.Func([IDL.Text, IDL.Text], [], []),
-    'deleteAircraft' : IDL.Func([IDL.Text], [], []),
-    'deleteExercise' : IDL.Func([IDL.Text], [], []),
-    'deleteFlightLog' : IDL.Func([IDL.Nat], [], []),
-    'deleteInstructor' : IDL.Func([IDL.Text], [], []),
-    'deleteStudent' : IDL.Func([IDL.Text], [], []),
+    'createInstructor' : IDL.Func([IDL.Text, IDL.Text], [Instructor], []),
+    'createStudent' : IDL.Func([IDL.Text, IDL.Text], [Student], []),
+    'deleteAircraft' : IDL.Func([IDL.Text], [SuccessResult], []),
+    'deleteExercise' : IDL.Func([IDL.Text], [SuccessResult], []),
+    'deleteFlightLog' : IDL.Func([IDL.Nat], [SuccessResult], []),
+    'deleteInstructor' : IDL.Func([IDL.Text], [SuccessResult], []),
+    'deleteStudent' : IDL.Func([IDL.Text], [SuccessResult], []),
     'exportFlightLogsAsCSV' : IDL.Func([], [IDL.Text], ['query']),
+    'getAircraft' : IDL.Func([IDL.Text], [AircraftResult], ['query']),
     'getAllAircraft' : IDL.Func([], [IDL.Vec(Aircraft)], ['query']),
     'getAllExercises' : IDL.Func([], [IDL.Vec(Exercise)], ['query']),
     'getAllFlightLogs' : IDL.Func([], [IDL.Vec(FlightLog)], ['query']),
     'getAllInstructors' : IDL.Func([], [IDL.Vec(Instructor)], ['query']),
+    'getAllRegisteredUsers' : IDL.Func([], [IDL.Vec(User)], ['query']),
     'getAllStudents' : IDL.Func([], [IDL.Vec(Student)], ['query']),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getCurrentUserRole' : IDL.Func(
+        [IDL.Principal],
+        [UserRoleResult],
+        ['query'],
+      ),
+    'getExercise' : IDL.Func([IDL.Text], [ExerciseResult], ['query']),
+    'getFlightLog' : IDL.Func([IDL.Nat], [FlightLogResult], ['query']),
+    'getInstructor' : IDL.Func([IDL.Text], [InstructorResult], ['query']),
     'getInstructorReport' : IDL.Func(
         [IDL.Text],
         [IDL.Float64, IDL.Nat],
         ['query'],
       ),
+    'getStudent' : IDL.Func([IDL.Text], [StudentResult], ['query']),
     'getStudentTotalHours' : IDL.Func([IDL.Text], [IDL.Float64], ['query']),
-    'updateAircraft' : IDL.Func([IDL.Text, IDL.Text], [], []),
-    'updateExercise' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(UserProfile)],
+        ['query'],
+      ),
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'partialUpdateAircraft' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Text)],
+        [AircraftResult],
+        [],
+      ),
+    'partialUpdateExercise' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
+        [ExerciseResult],
+        [],
+      ),
+    'partialUpdateFlightLog' : IDL.Func(
+        [
+          IDL.Nat,
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Float64),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+        ],
+        [FlightLogResult],
+        [],
+      ),
+    'partialUpdateInstructor' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Text)],
+        [InstructorResult],
+        [],
+      ),
+    'partialUpdateStudent' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Text)],
+        [StudentResult],
+        [],
+      ),
+    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'updateAircraft' : IDL.Func([IDL.Text, IDL.Text], [AircraftResult], []),
+    'updateCurrentUserRole' : IDL.Func(
+        [IDL.Principal, Role],
+        [UpdateRoleResult],
+        [],
+      ),
+    'updateExercise' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [ExerciseResult],
+        [],
+      ),
     'updateFlightLog' : IDL.Func(
         [
           IDL.Nat,
@@ -174,12 +400,15 @@ export const idlFactory = ({ IDL }) => {
           IDL.Nat,
           IDL.Text,
           IDL.Text,
+          IDL.Float64,
+          IDL.Text,
+          IDL.Text,
         ],
-        [],
+        [FlightLogResult],
         [],
       ),
-    'updateInstructor' : IDL.Func([IDL.Text, IDL.Text], [], []),
-    'updateStudent' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'updateInstructor' : IDL.Func([IDL.Text, IDL.Text], [InstructorResult], []),
+    'updateStudent' : IDL.Func([IDL.Text, IDL.Text], [StudentResult], []),
   });
 };
 

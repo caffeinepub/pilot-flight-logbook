@@ -1,22 +1,59 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix Excel export filename to use proper project name",
+  "title": "Add Admin Panel with dashboard, user management, and role-based access control",
   "requirements": [
     {
-      "id": "REQ-22",
-      "summary": "Update ExportButton component to generate CSV filename as 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' using the proper project name with underscores and current date",
+      "id": "REQ-38",
+      "summary": "Create useAdminPanel hook for user management and entity count aggregation",
       "acceptanceCriteria": [
-        "Downloaded CSV file is named 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' with the current date",
-        "Filename uses underscores instead of spaces",
-        "Filename reflects the proper project name 'Pilot Flight Logbook'",
-        "Export functionality continues to work without errors"
+        "useAdminPanel hook exports users list, entity counts, updateUserRole mutation, and isAdmin helper",
+        "updateUserRole mutation invalidates users query cache on success",
+        "isAdmin returns true only when the current principal has the Admin role",
+        "Hook handles loading and error states gracefully"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/ExportButton.tsx",
+          "path": "frontend/src/hooks/useAdminPanel.ts",
+          "operation": "create",
+          "description": "Create a React Query hook that: (1) fetches all registered users via getAllRegisteredUsers backend method; (2) derives entity counts by reusing existing query data from useEntities hooks (students, instructors, aircraft, exercises); (3) provides an updateUserRole mutation calling updateCurrentUserRole backend method and invalidating the users query on success; (4) exposes an isAdmin helper that checks if the current user's role (from getCallerUserRole) is 'admin'. Use the authorization component pattern for role checks. Handle loading/error states for all queries. Verify the authorization component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-39",
+      "summary": "Create AdminPanel component with dashboard, quick actions, and user management table",
+      "acceptanceCriteria": [
+        "System Overview cards correctly display live counts fetched from backend",
+        "Quick Actions section renders navigation buttons for Students, Instructors, Aircraft, and Exercises management",
+        "User Management table displays all users with Name, Principal (truncated to readable length), and Role columns",
+        "Role dropdown updates the role via mutation and shows success toast on completion",
+        "Error toast is shown if updateUserRole fails (including last-admin protection error)",
+        "Table shows loading state while fetching users",
+        "Component renders nothing (or a permission-denied message) when accessed by non-admin users"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/AdminPanel.tsx",
+          "operation": "create",
+          "description": "Create a component that renders three sections: (1) System Overview with four stat cards displaying live counts of Students, Instructors, Aircraft, and Exercises (use Card components from shadcn/ui for consistent styling); (2) Quick Actions section with navigation buttons/links to switch to the Manage tab and focus on each entity type (Students, Instructors, Aircraft, Exercises); (3) User Management section showing a Table component with columns for Name, Principal (truncated using slice or similar), and Role (dropdown with Admin/User/Guest options). Wire the Role dropdown to the updateUserRole mutation from useAdminPanel hook. Show toast notifications on success/error using the existing toast system. Guard the entire component: if the user is not an admin (check via isAdmin helper), render an access-denied message or return null. Display loading spinners while fetching users or entity counts. Use the authorization component for role-based rendering; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-40",
+      "summary": "Add Admin tab to root navigation, visible only to admin users",
+      "acceptanceCriteria": [
+        "Admin tab appears in navigation only when the current user's role is 'Admin'",
+        "Non-admin users do not see the Admin tab",
+        "Clicking the Admin tab renders the AdminPanel component",
+        "Admin tab has a shield or lock icon"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Update the filename generation logic in the handleExport function to use 'Pilot_Flight_Logbook' as the base name and format the date as YYYY-MM-DD. Replace the current filename string with a format that constructs 'Pilot_Flight_Logbook_' + current date in YYYY-MM-DD format + '.csv'. Ensure the date formatting uses padded values (e.g., '2024-01-05' not '2024-1-5')."
+          "description": "Add a new 'Admin' tab to the existing 5-tab layout (Flight Entry, Flight Logs, Reports, Export, Manage). Conditionally render the Admin tab in the tab list only when the current user has the 'Admin' role (use the isAdmin helper from useAdminPanel or directly check getCallerUserRole). Import and use a shield or lock icon (e.g., ShieldIcon or LockIcon from lucide-react) for the Admin tab. When the Admin tab is selected, render the AdminPanel component. Ensure non-admin users do not see the tab in the sidebar/tab bar. Use the authorization component for role-based navigation visibility; verify the component's usage instructions before implementing."
         }
       ]
     }

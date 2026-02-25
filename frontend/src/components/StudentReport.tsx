@@ -10,7 +10,7 @@ export default function StudentReport() {
     <Card>
       <CardHeader>
         <CardTitle>Student Report</CardTitle>
-        <CardDescription>Total flight hours by student.</CardDescription>
+        <CardDescription>Total flight hours and aircraft hours by student.</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -27,6 +27,7 @@ export default function StudentReport() {
               <TableRow>
                 <TableHead>Student Name</TableHead>
                 <TableHead className="text-right">Total Hours</TableHead>
+                <TableHead className="text-right">Total Aircraft Hours</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -34,6 +35,7 @@ export default function StudentReport() {
                 <TableRow key={item.studentId}>
                   <TableCell className="font-medium">{item.studentName}</TableCell>
                   <TableCell className="text-right">{item.totalHours.toFixed(2)}</TableCell>
+                  <TableCell className="text-right">{item.totalAircraftHours.toFixed(1)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

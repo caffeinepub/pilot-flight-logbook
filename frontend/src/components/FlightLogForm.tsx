@@ -31,6 +31,9 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
   const [landingCount, setLandingCount] = useState('1');
   const [takeoffTime, setTakeoffTime] = useState('');
   const [landingTime, setLandingTime] = useState('');
+  const [aircraftHours, setAircraftHours] = useState('');
+  const [sunriseTime, setSunriseTime] = useState('');
+  const [sunsetTime, setSunsetTime] = useState('');
 
   const { students, instructors, aircraft, exercises } = useEntities();
   const createFlightLog = useCreateFlightLog();
@@ -50,6 +53,9 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
       setLandingCount(flightLog.landingCount.toString());
       setTakeoffTime(flightLog.takeoffTime);
       setLandingTime(flightLog.landingTime);
+      setAircraftHours(flightLog.aircraftHours > 0 ? flightLog.aircraftHours.toString() : '');
+      setSunriseTime(flightLog.sunriseTime || '');
+      setSunsetTime(flightLog.sunsetTime || '');
     } else {
       // Reset to defaults when not editing
       setDate(new Date());
@@ -62,10 +68,29 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
       setLandingCount('1');
       setTakeoffTime('');
       setLandingTime('');
+      setAircraftHours('');
+      setSunriseTime('');
+      setSunsetTime('');
     }
   }, [flightLog]);
 
   const totalHours = calculateTotalHours(takeoffTime, landingTime);
+
+  const resetForm = () => {
+    setDate(new Date());
+    setStudentId('');
+    setInstructorId('');
+    setAircraftId('');
+    setExerciseId('');
+    setFlightType('Dual');
+    setLandingType('Day');
+    setLandingCount('1');
+    setTakeoffTime('');
+    setLandingTime('');
+    setAircraftHours('');
+    setSunriseTime('');
+    setSunsetTime('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,24 +111,15 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
       landingCount: BigInt(parseInt(landingCount) || 0),
       takeoffTime,
       landingTime,
+      aircraftHours: parseFloat(aircraftHours) || 0,
+      sunriseTime,
+      sunsetTime,
     };
 
     try {
       await createFlightLog.mutateAsync(formData);
       toast.success('Flight log created successfully');
-
-      // Reset form
-      setDate(new Date());
-      setStudentId('');
-      setInstructorId('');
-      setAircraftId('');
-      setExerciseId('');
-      setFlightType('Dual');
-      setLandingType('Day');
-      setLandingCount('1');
-      setTakeoffTime('');
-      setLandingTime('');
-
+      resetForm();
       onSuccess?.();
     } catch (error) {
       console.error('Error creating flight log:', error);
@@ -133,6 +149,9 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
       landingCount: BigInt(parseInt(landingCount) || 0),
       takeoffTime,
       landingTime,
+      aircraftHours: parseFloat(aircraftHours) || 0,
+      sunriseTime,
+      sunsetTime,
     };
 
     try {
@@ -146,16 +165,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
   };
 
   const handleCancel = () => {
-    setDate(new Date());
-    setStudentId('');
-    setInstructorId('');
-    setAircraftId('');
-    setExerciseId('');
-    setFlightType('Dual');
-    setLandingType('Day');
-    setLandingCount('1');
-    setTakeoffTime('');
-    setLandingTime('');
+    resetForm();
     onCancel?.();
   };
 
@@ -170,6 +180,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
       <CardContent>
         <form onSubmit={isEditMode ? handleUpdate : handleSubmit} className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
+            {/* Date */}
             <div className="space-y-2">
               <Label htmlFor="date">Date</Label>
               <Popover>
@@ -193,6 +204,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               </Popover>
             </div>
 
+            {/* Student */}
             <div className="space-y-2">
               <Label htmlFor="student">Student</Label>
               <Select value={studentId} onValueChange={setStudentId} required>
@@ -209,6 +221,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               </Select>
             </div>
 
+            {/* Instructor */}
             <div className="space-y-2">
               <Label htmlFor="instructor">Instructor</Label>
               <Select value={instructorId} onValueChange={setInstructorId} required>
@@ -225,6 +238,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               </Select>
             </div>
 
+            {/* Aircraft */}
             <div className="space-y-2">
               <Label htmlFor="aircraft">Aircraft</Label>
               <Select value={aircraftId} onValueChange={setAircraftId} required>
@@ -241,6 +255,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               </Select>
             </div>
 
+            {/* Exercise */}
             <div className="space-y-2">
               <Label htmlFor="exercise">Exercise</Label>
               <Select value={exerciseId} onValueChange={setExerciseId} required>
@@ -257,6 +272,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               </Select>
             </div>
 
+            {/* Flight Type */}
             <div className="space-y-2">
               <Label htmlFor="flightType">Flight Type</Label>
               <Select value={flightType} onValueChange={(val) => setFlightType(val as 'Solo' | 'Dual')} required>
@@ -270,6 +286,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               </Select>
             </div>
 
+            {/* Landing Type */}
             <div className="space-y-2">
               <Label htmlFor="landingType">Landing Type</Label>
               <Select value={landingType} onValueChange={(val) => setLandingType(val as 'Day' | 'Night')} required>
@@ -283,6 +300,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               </Select>
             </div>
 
+            {/* Landing Count */}
             <div className="space-y-2">
               <Label htmlFor="landingCount">Landing Count</Label>
               <Input
@@ -295,6 +313,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               />
             </div>
 
+            {/* Takeoff Time */}
             <div className="space-y-2">
               <Label htmlFor="takeoffTime">Takeoff Time (HH:MM)</Label>
               <Input
@@ -306,6 +325,7 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               />
             </div>
 
+            {/* Landing Time */}
             <div className="space-y-2">
               <Label htmlFor="landingTime">Landing Time (HH:MM)</Label>
               <Input
@@ -317,11 +337,48 @@ export default function FlightLogForm({ flightLog, onSuccess, onCancel }: Flight
               />
             </div>
 
+            {/* Total Hours (calculated) */}
             <div className="space-y-2">
               <Label>Total Hours</Label>
               <div className="flex h-10 items-center rounded-md border border-input bg-muted px-3 text-sm">
                 {formatTime(totalHours)} hours
               </div>
+            </div>
+
+            {/* Aircraft Hours */}
+            <div className="space-y-2">
+              <Label htmlFor="aircraftHours">Aircraft Hours</Label>
+              <Input
+                id="aircraftHours"
+                type="number"
+                min="0"
+                step="0.1"
+                placeholder="e.g. 1250.5"
+                value={aircraftHours}
+                onChange={(e) => setAircraftHours(e.target.value)}
+              />
+            </div>
+
+            {/* Sunrise Time */}
+            <div className="space-y-2">
+              <Label htmlFor="sunriseTime">Sunrise Time (HH:MM)</Label>
+              <Input
+                id="sunriseTime"
+                type="time"
+                value={sunriseTime}
+                onChange={(e) => setSunriseTime(e.target.value)}
+              />
+            </div>
+
+            {/* Sunset Time */}
+            <div className="space-y-2">
+              <Label htmlFor="sunsetTime">Sunset Time (HH:MM)</Label>
+              <Input
+                id="sunsetTime"
+                type="time"
+                value={sunsetTime}
+                onChange={(e) => setSunsetTime(e.target.value)}
+              />
             </div>
           </div>
 

@@ -1,29 +1,29 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { PlusCircle, Plane } from 'lucide-react';
+import { Plane, Shield } from 'lucide-react';
 import FlightLogForm from './components/FlightLogForm';
 import FlightLogTable from './components/FlightLogTable';
 import StudentReport from './components/StudentReport';
 import InstructorReport from './components/InstructorReport';
 import ExportButton from './components/ExportButton';
-import AddEntityDialog from './components/AddEntityDialog';
+import EntityManagement from './components/EntityManagement';
+import AdminPanel from './components/AdminPanel';
 import { Toaster } from '@/components/ui/sonner';
+import { useIsAdmin } from './hooks/useAdminPanel';
 import type { FlightLog } from './backend';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('entry');
   const [editingFlightLog, setEditingFlightLog] = useState<FlightLog | null>(null);
-  const [showStudentDialog, setShowStudentDialog] = useState(false);
-  const [showInstructorDialog, setShowInstructorDialog] = useState(false);
-  const [showAircraftDialog, setShowAircraftDialog] = useState(false);
-  const [showExerciseDialog, setShowExerciseDialog] = useState(false);
+  const { isAdmin } = useIsAdmin();
 
   const handleEdit = (log: FlightLog) => {
     setEditingFlightLog(log);
     setActiveTab('entry');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const gridCols = isAdmin ? 'grid-cols-6' : 'grid-cols-5';
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,31 +37,19 @@ export default function App() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex flex-wrap gap-3">
-          <Button onClick={() => setShowStudentDialog(true)} variant="outline" size="sm">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Student
-          </Button>
-          <Button onClick={() => setShowInstructorDialog(true)} variant="outline" size="sm">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Instructor
-          </Button>
-          <Button onClick={() => setShowAircraftDialog(true)} variant="outline" size="sm">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Aircraft
-          </Button>
-          <Button onClick={() => setShowExerciseDialog(true)} variant="outline" size="sm">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Exercise
-          </Button>
-        </div>
-
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+          <TabsList className={`mb-6 grid w-full ${gridCols} lg:w-auto lg:inline-grid`}>
             <TabsTrigger value="entry">Flight Entry</TabsTrigger>
             <TabsTrigger value="logs">Flight Logs</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
             <TabsTrigger value="export">Export</TabsTrigger>
+            <TabsTrigger value="manage">Manage</TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger value="admin" className="gap-1.5">
+                <Shield className="h-4 w-4" />
+                Admin
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="entry" className="mt-6">
@@ -96,6 +84,16 @@ export default function App() {
               </div>
             </div>
           </TabsContent>
+
+          <TabsContent value="manage" className="mt-6">
+            <EntityManagement />
+          </TabsContent>
+
+          {isAdmin && (
+            <TabsContent value="admin" className="mt-6">
+              <AdminPanel onNavigateToManage={() => setActiveTab('manage')} />
+            </TabsContent>
+          )}
         </Tabs>
       </main>
 
@@ -113,27 +111,6 @@ export default function App() {
         </div>
       </footer>
 
-      <AddEntityDialog
-        entityType="student"
-        open={showStudentDialog}
-        onOpenChange={setShowStudentDialog}
-      />
-      <AddEntityDialog
-        entityType="instructor"
-        open={showInstructorDialog}
-        onOpenChange={setShowInstructorDialog}
-      />
-      <AddEntityDialog
-        entityType="aircraft"
-        open={showAircraftDialog}
-        onOpenChange={setShowAircraftDialog}
-      />
-      <AddEntityDialog
-        entityType="exercise"
-        open={showExerciseDialog}
-        onOpenChange={setShowExerciseDialog}
-      />
-      
       <Toaster />
     </div>
   );

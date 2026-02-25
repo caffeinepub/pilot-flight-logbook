@@ -18,9 +18,9 @@ export function useFlightLogs() {
     queryKey: ['flightLogs'],
     queryFn: async () => {
       if (!actor) return [];
-      
+
       const logs = await actor.getAllFlightLogs();
-      
+
       // Resolve foreign keys to names
       return logs.map((log) => {
         const student = students.data?.find((s) => s.id === log.studentId);
@@ -57,9 +57,12 @@ export function useCreateFlightLog() {
       landingCount: bigint;
       takeoffTime: string;
       landingTime: string;
+      aircraftHours: number;
+      sunriseTime: string;
+      sunsetTime: string;
     }) => {
       if (!actor) throw new Error('Actor not initialized');
-      
+
       return actor.createFlightLog(
         data.date,
         data.studentId,
@@ -70,11 +73,16 @@ export function useCreateFlightLog() {
         data.landingType,
         data.landingCount,
         data.takeoffTime,
-        data.landingTime
+        data.landingTime,
+        data.aircraftHours,
+        data.sunriseTime,
+        data.sunsetTime
       );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flightLogs'] });
+      queryClient.invalidateQueries({ queryKey: ['studentReport'] });
+      queryClient.invalidateQueries({ queryKey: ['instructorReport'] });
     },
   });
 }
@@ -96,9 +104,12 @@ export function useUpdateFlightLog() {
       landingCount: bigint;
       takeoffTime: string;
       landingTime: string;
+      aircraftHours: number;
+      sunriseTime: string;
+      sunsetTime: string;
     }) => {
       if (!actor) throw new Error('Actor not initialized');
-      
+
       return actor.updateFlightLog(
         data.id,
         data.date,
@@ -110,11 +121,16 @@ export function useUpdateFlightLog() {
         data.landingType,
         data.landingCount,
         data.takeoffTime,
-        data.landingTime
+        data.landingTime,
+        data.aircraftHours,
+        data.sunriseTime,
+        data.sunsetTime
       );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flightLogs'] });
+      queryClient.invalidateQueries({ queryKey: ['studentReport'] });
+      queryClient.invalidateQueries({ queryKey: ['instructorReport'] });
     },
   });
 }
@@ -130,6 +146,8 @@ export function useDeleteFlightLog() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flightLogs'] });
+      queryClient.invalidateQueries({ queryKey: ['studentReport'] });
+      queryClient.invalidateQueries({ queryKey: ['instructorReport'] });
     },
   });
 }

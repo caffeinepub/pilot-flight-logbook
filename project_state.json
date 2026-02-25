@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
+  "projectStateVersion": 17,
   "summary": "Pilot Flight Logbook - Single file app with comprehensive flight tracking, student/instructor management, and reporting features",
   "architectural_notes": [
     "Single-file application architecture",
@@ -10,7 +10,7 @@
   "known_issues": [
     "Excel/CSV export filename does not match the proper work name or project name"
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-create-frontend-form-to-add-new-students-instructors-aircraft-and-exercises-with-separate-add-buttons-dialogs-for-each-entity-type",
@@ -131,6 +131,86 @@
         "REQ-22"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-a-dedicated-manage-entities-section-or-tab-in-the-frontend-that-provides-full-crud-functionality-for-students-instructors-aircraft-and-exercises-each-entity-type-should-have-its-own-table-list-view-displaying-all-existing-records-with-options-to-add-create-edit-update-and-delete-each-record",
+      "title": "Add a dedicated 'Manage Entities' section or tab in the frontend that provides full CRUD functionality for Students, Instructors, Aircraft, and Exercises. Each entity type should have its own table/list view displaying all existing records, with options to Add (create), Edit (update), and Delete each record.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-useentities-react-query-hook-to-include-mutation-hooks-for-updating-and-deleting-students-instructors-aircraft-and-exercises-each-mutation-should-call-the-corresponding-backend-method-handle-errors-gracefully-and-invalidate-the-relevant-query-cache-on-success",
+      "title": "Extend the useEntities React Query hook to include mutation hooks for updating and deleting Students, Instructors, Aircraft, and Exercises. Each mutation should call the corresponding backend method, handle errors gracefully, and invalidate the relevant query cache on success.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-flightlogform-component-to-include-1-a-numeric-input-for-aircraft-hours-decimal-allowed-2-a-time-input-for-sunrise-time-in-hh-mm-format-and-3-a-time-input-for-sunset-time-in-hh-mm-format-these-fields-must-be-included-in-both-the-create-and-edit-form-flows-pre-filled-with-existing-data-in-edit-mode",
+      "title": "Update the FlightLogForm component to include: (1) a numeric input for 'Aircraft Hours' (decimal allowed), (2) a time input for 'Sunrise Time' in HH:MM format, and (3) a time input for 'Sunset Time' in HH:MM format. These fields must be included in both the create and edit form flows, pre-filled with existing data in edit mode.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-flightlogtable-component-to-display-aircraft-hours-sunrise-time-and-sunset-time-columns-for-each-flight-log-entry-row",
+      "title": "Update the FlightLogTable component to display 'Aircraft Hours', 'Sunrise Time', and 'Sunset Time' columns for each flight log entry row.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-instructorreport-and-studentreport-components-and-their-corresponding-usereports-hooks-to-include-aircraft-hours-in-the-report-calculations-each-student-and-instructor-report-should-show-total-aircraft-hours-flown-in-addition-to-existing-metrics",
+      "title": "Update the InstructorReport and StudentReport components and their corresponding useReports hooks to include Aircraft Hours in the report calculations. Each student and instructor report should show total aircraft hours flown in addition to existing metrics.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-useflightlogs-hook-to-include-the-new-aircrafthours-sunrisetime-and-sunsettime-fields-when-creating-and-updating-flight-log-entries-ensuring-they-are-passed-correctly-to-and-from-the-backend-actor",
+      "title": "Update the useFlightLogs hook to include the new aircraftHours, sunriseTime, and sunsetTime fields when creating and updating flight log entries, ensuring they are passed correctly to and from the backend actor.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-exportbutton-frontend-component-to-verify-that-the-downloaded-csv-file-does-not-contain-any-id-columns-and-that-all-entity-references-student-instructor-aircraft-exercise-are-displayed-as-names-ensure-the-filename-remains-formatted-as-pilot-flight-logbook-yyyy-mm-dd-csv",
+      "title": "Update the ExportButton frontend component to verify that the downloaded CSV file does not contain any ID columns and that all entity references (Student, Instructor, Aircraft, Exercise) are displayed as names. Ensure the filename remains formatted as 'Pilot_Flight_Logbook_YYYY-MM-DD.csv'.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-useadminpanel-react-query-hook-in-frontend-src-hooks-useadminpanel-ts-that-fetches-all-users-via-getallusers-backend-method-fetches-entity-counts-students-instructors-aircraft-exercises-by-reusing-existing-query-data-provides-an-updateuserrole-mutation-that-calls-the-backend-updateuserrole-method-and-invalidates-the-users-query-on-success-and-exposes-a-helper-to-check-if-the-currently-authenticated-principal-has-the-admin-role",
+      "title": "Create a useAdminPanel React Query hook in frontend/src/hooks/useAdminPanel.ts that: fetches all users via getAllUsers backend method, fetches entity counts (students, instructors, aircraft, exercises) by reusing existing query data, provides an updateUserRole mutation that calls the backend updateUserRole method and invalidates the users query on success, and exposes a helper to check if the currently authenticated principal has the 'Admin' role.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-adminpanel-component-at-frontend-src-components-adminpanel-tsx-that-renders-1-a-system-overview-section-with-four-dashboard-stat-cards-showing-counts-of-students-instructors-aircraft-and-exercises-2-a-quick-actions-section-with-navigation-links-buttons-to-the-manage-entities-tabs-for-each-entity-type-3-a-user-management-section-displaying-a-table-of-all-registered-users-with-columns-for-name-principal-truncated-and-role-where-the-role-column-shows-a-dropdown-admin-user-guest-that-triggers-the-updateuserrole-mutation-on-change-with-toast-notifications-for-success-and-error-and-a-guard-preventing-demotion-of-the-last-admin",
+      "title": "Create a new AdminPanel component at frontend/src/components/AdminPanel.tsx that renders: (1) a System Overview section with four dashboard stat cards showing counts of Students, Instructors, Aircraft, and Exercises; (2) a Quick Actions section with navigation links/buttons to the Manage Entities tabs for each entity type; (3) a User Management section displaying a table of all registered users with columns for Name, Principal (truncated), and Role, where the Role column shows a dropdown (Admin/User/Guest) that triggers the updateUserRole mutation on change, with toast notifications for success and error, and a guard preventing demotion of the last admin.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-admin-tab-to-the-root-app-tsx-tab-layout-alongside-flight-entry-flight-logs-reports-export-manage-that-renders-the-adminpanel-component-the-admin-tab-must-only-be-visible-in-the-navigation-when-the-currently-authenticated-user-has-the-admin-role-use-a-shield-or-lock-icon-for-the-tab-non-admin-users-should-not-see-the-tab-in-the-sidebar-tab-bar",
+      "title": "Add an 'Admin' tab to the root App.tsx tab layout (alongside Flight Entry, Flight Logs, Reports, Export, Manage) that renders the AdminPanel component. The Admin tab must only be visible in the navigation when the currently authenticated user has the 'Admin' role. Use a shield or lock icon for the tab. Non-admin users should not see the tab in the sidebar/tab bar.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -242,6 +322,94 @@
       "id": "AR-17",
       "summary": "Add update button to the application",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Implement backend update methods for Student, Instructor, Aircraft, and Exercise entities. Each update method should accept the entity ID and updated fields, persist the changes in stable storage, and return a success or error result.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Implement backend delete methods for Student, Instructor, Aircraft, and Exercise entities. Each delete method should accept the entity ID and remove the record from stable storage, returning a success or error result.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Remove ID column from CSV export file",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Add Aircraft Hours field to flight log and include in reports",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Add Sunrise and Sunset time fields to flight log entries",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Add an 'Aircraft Hours' numeric input field to the FlightLog data model in the backend. This field should store the total hours on the aircraft at the time of the flight (as a Float). Update all backend CRUD methods (create, read, update) for FlightLog to include this new field.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Add 'Sunrise Time' (Text, HH:MM format) and 'Sunset Time' (Text, HH:MM format) fields to the FlightLog data model in the backend. Update all backend CRUD methods (create, read, update) for FlightLog to include these new fields.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Update the backend CSV export method to remove the ID column from the exported CSV file. The CSV headers should not include any ID field for flight log entries, students, instructors, aircraft, or exercises. Add 'Aircraft Hours', 'Sunrise Time', and 'Sunset Time' columns to the CSV export.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Update the ExportButton component so the downloaded CSV does not include any ID column in its output, matching the updated backend CSV export. Verify the filename is formatted as 'Pilot_Flight_Logbook_YYYY-MM-DD.csv'.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Update the backend CSV export method so that all columns display human-readable names instead of IDs. Specifically, the Student, Instructor, Aircraft, and Exercise columns must show the entity's name (or registration for Aircraft) by resolving the stored IDs against their respective data maps. The exported CSV must not contain any ID columns. Columns should be: Date, Student, Instructor, Aircraft, Exercise, Flight Type, Landing Type, Landing Count, Takeoff Time, Landing Time, Total Hours, Aircraft Hours, Sunrise Time, Sunset Time.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Add Admin Panel with dashboard overview (counts of students, instructors, aircraft, exercises), quick action links to management pages, user management table (view users, principals, roles), role assignment (Admin/User/Guest), and access control so only admins see the Admin Panel",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Add backend support for user management: store a registry of users (principal, name, role) in stable storage where role can be 'Admin', 'User', or 'Guest'. Provide methods: registerOrUpdateUser(principal, name, role), getAllUsers() returning all registered users, updateUserRole(principal, newRole) returning success/error, and getCurrentUserRole(principal) returning the role for a given principal. Ensure the last admin cannot be demoted or removed (return an error if the operation would leave zero admins).",
+      "reqIds": [
+        "REQ-37"
+      ],
       "status": "pending"
     }
   ],

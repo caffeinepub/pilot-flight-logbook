@@ -66,6 +66,9 @@ export default function FlightLogTable({ onEdit }: FlightLogTableProps) {
                     <TableHead>Landings</TableHead>
                     <TableHead>Times</TableHead>
                     <TableHead>Total Hours</TableHead>
+                    <TableHead>Aircraft Hours</TableHead>
+                    <TableHead>Sunrise</TableHead>
+                    <TableHead>Sunset</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -90,6 +93,15 @@ export default function FlightLogTable({ onEdit }: FlightLogTableProps) {
                         </div>
                       </TableCell>
                       <TableCell>{log.totalHours.toFixed(2)}h</TableCell>
+                      <TableCell>
+                        {log.aircraftHours > 0 ? log.aircraftHours.toFixed(1) : '—'}
+                      </TableCell>
+                      <TableCell>
+                        {log.sunriseTime || '—'}
+                      </TableCell>
+                      <TableCell>
+                        {log.sunsetTime || '—'}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button

@@ -1,37 +1,112 @@
 {
   "kind": "build_request",
-  "title": "Fix Excel export filename to use proper project name",
+  "title": "Add Admin Panel with dashboard, user management, and role-based access control",
   "projectName": "Pilot Flight Logbook",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-22",
-      "text": "Update the ExportButton component to generate the CSV filename using 'Pilot_Flight_Logbook' as the base name instead of the current filename, formatted as 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' where YYYY-MM-DD is the current date",
-      "target": "frontend",
+      "id": "REQ-37",
+      "text": "Add backend support for user management: store a registry of users (principal, name, role) in stable storage where role can be 'Admin', 'User', or 'Guest'. Provide methods: registerOrUpdateUser(principal, name, role), getAllUsers() returning all registered users, updateUserRole(principal, newRole) returning success/error, and getCurrentUserRole(principal) returning the role for a given principal. Ensure the last admin cannot be demoted or removed (return an error if the operation would leave zero admins).",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-1"
         ],
         "quotes": [
-          "Excel sheet in  name not the proper work name"
+          "Complete table listing all registered users",
+          "View user names, principals (IDs), and current roles",
+          "Change user roles with dropdown selector (Admin/User/Guest)",
+          "Protected: Cannot remove the last admin from the system"
         ]
       },
       "acceptanceCriteria": [
-        "Downloaded CSV file is named 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' with the current date",
-        "Filename uses underscores instead of spaces",
-        "Filename reflects the proper project name 'Pilot Flight Logbook'",
-        "Export functionality continues to work without errors"
+        "registerOrUpdateUser stores principal, name, and role in stable storage",
+        "getAllUsers returns all registered users with principal, name, and role",
+        "updateUserRole updates a user's role and returns an error if it would leave zero admins",
+        "getCurrentUserRole returns the correct role for a given principal",
+        "Attempting to demote the last admin returns a descriptive error"
+      ]
+    },
+    {
+      "id": "REQ-38",
+      "text": "Create a useAdminPanel React Query hook in frontend/src/hooks/useAdminPanel.ts that: fetches all users via getAllUsers backend method, fetches entity counts (students, instructors, aircraft, exercises) by reusing existing query data, provides an updateUserRole mutation that calls the backend updateUserRole method and invalidates the users query on success, and exposes a helper to check if the currently authenticated principal has the 'Admin' role.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Dashboard cards showing total counts of students, instructors, aircraft, and exercises",
+          "Change user roles with dropdown selector (Admin/User/Guest)",
+          "All user management operations require admin privileges"
+        ]
+      },
+      "acceptanceCriteria": [
+        "useAdminPanel hook exports users list, entity counts, updateUserRole mutation, and isAdmin helper",
+        "updateUserRole mutation invalidates users query cache on success",
+        "isAdmin returns true only when the current principal has the Admin role",
+        "Hook handles loading and error states gracefully"
+      ]
+    },
+    {
+      "id": "REQ-39",
+      "text": "Create a new AdminPanel component at frontend/src/components/AdminPanel.tsx that renders: (1) a System Overview section with four dashboard stat cards showing counts of Students, Instructors, Aircraft, and Exercises; (2) a Quick Actions section with navigation links/buttons to the Manage Entities tabs for each entity type; (3) a User Management section displaying a table of all registered users with columns for Name, Principal (truncated), and Role, where the Role column shows a dropdown (Admin/User/Guest) that triggers the updateUserRole mutation on change, with toast notifications for success and error, and a guard preventing demotion of the last admin.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Dashboard cards showing total counts of students, instructors, aircraft, and exercises",
+          "Quick access links to all management pages",
+          "Complete table listing all registered users",
+          "View user names, principals (IDs), and current roles",
+          "Change user roles with dropdown selector (Admin/User/Guest)",
+          "Protected: Cannot remove the last admin from the system",
+          "Real-time updates with success/error notifications"
+        ]
+      },
+      "acceptanceCriteria": [
+        "System Overview cards correctly display live counts fetched from backend",
+        "Quick Actions section renders navigation buttons for Students, Instructors, Aircraft, and Exercises management",
+        "User Management table displays all users with Name, Principal (truncated to readable length), and Role columns",
+        "Role dropdown updates the role via mutation and shows success toast on completion",
+        "Error toast is shown if updateUserRole fails (including last-admin protection error)",
+        "Table shows loading state while fetching users",
+        "Component renders nothing (or a permission-denied message) when accessed by non-admin users"
+      ]
+    },
+    {
+      "id": "REQ-40",
+      "text": "Add an 'Admin' tab to the root App.tsx tab layout (alongside Flight Entry, Flight Logs, Reports, Export, Manage) that renders the AdminPanel component. The Admin tab must only be visible in the navigation when the currently authenticated user has the 'Admin' role. Use a shield or lock icon for the tab. Non-admin users should not see the tab in the sidebar/tab bar.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Admin Panel menu item only appears for admin users",
+          "Shield icon in sidebar for easy identification"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin tab appears in navigation only when the current user's role is 'Admin'",
+        "Non-admin users do not see the Admin tab",
+        "Clicking the Admin tab renders the AdminPanel component",
+        "Admin tab has a shield or lock icon"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the CSV content format or data structure",
-    "Maintain existing export functionality and user experience"
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
+    "All Motoko logic must remain in a single actor in backend/main.mo",
+    "The last admin user must never be demotable or deletable — backend must enforce this"
   ],
   "nonGoals": [
-    "Changing the CSV data columns or content",
-    "Modifying backend export method",
-    "Adding filename customization UI"
+    "External authentication providers beyond Internet Identity",
+    "Email notifications or invitations for new users",
+    "Fine-grained permissions beyond the three roles (Admin/User/Guest)",
+    "Audit logs or activity history for admin actions"
   ],
   "imageRequirements": {
     "required": [],

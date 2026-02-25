@@ -2,20 +2,59 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-exportbutton-component-to-generate-the-csv-filename-using-pilot-flight-logbook-as-the-base-name-instead-of-the-current-filename-formatted-as-pilot-flight-logbook-yyyy-mm-dd-csv-where-yyyy-mm-dd-is-the-current-date",
-      "featureTitle": "Update the ExportButton component to generate the CSV filename using 'Pilot_Flight_Logbook' as the base name instead of the current filename, formatted as 'Pilot_Flight_Logbook_YYYY-MM-DD.csv' where YYYY-MM-DD is the current date",
+      "featureId": "feature-create-a-useadminpanel-react-query-hook-in-frontend-src-hooks-useadminpanel-ts-that-fetches-all-users-via-getallusers-backend-method-fetches-entity-counts-students-instructors-aircraft-exercises-by-reusing-existing-query-data-provides-an-updateuserrole-mutation-that-calls-the-backend-updateuserrole-method-and-invalidates-the-users-query-on-success-and-exposes-a-helper-to-check-if-the-currently-authenticated-principal-has-the-admin-role",
+      "featureTitle": "Create a useAdminPanel React Query hook in frontend/src/hooks/useAdminPanel.ts that: fetches all users via getAllUsers backend method, fetches entity counts (students, instructors, aircraft, exercises) by reusing existing query data, provides an updateUserRole mutation that calls the backend updateUserRole method and invalidates the users query on success, and exposes a helper to check if the currently authenticated principal has the 'Admin' role.",
       "files": [
-        "frontend/src/components/ExportButton.tsx"
+        "frontend/src/hooks/useAdminPanel.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-22"
+        "REQ-38"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-new-adminpanel-component-at-frontend-src-components-adminpanel-tsx-that-renders-1-a-system-overview-section-with-four-dashboard-stat-cards-showing-counts-of-students-instructors-aircraft-and-exercises-2-a-quick-actions-section-with-navigation-links-buttons-to-the-manage-entities-tabs-for-each-entity-type-3-a-user-management-section-displaying-a-table-of-all-registered-users-with-columns-for-name-principal-truncated-and-role-where-the-role-column-shows-a-dropdown-admin-user-guest-that-triggers-the-updateuserrole-mutation-on-change-with-toast-notifications-for-success-and-error-and-a-guard-preventing-demotion-of-the-last-admin",
+      "featureTitle": "Create a new AdminPanel component at frontend/src/components/AdminPanel.tsx that renders: (1) a System Overview section with four dashboard stat cards showing counts of Students, Instructors, Aircraft, and Exercises; (2) a Quick Actions section with navigation links/buttons to the Manage Entities tabs for each entity type; (3) a User Management section displaying a table of all registered users with columns for Name, Principal (truncated), and Role, where the Role column shows a dropdown (Admin/User/Guest) that triggers the updateUserRole mutation on change, with toast notifications for success and error, and a guard preventing demotion of the last admin.",
+      "files": [
+        "frontend/src/components/AdminPanel.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-39"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-an-admin-tab-to-the-root-app-tsx-tab-layout-alongside-flight-entry-flight-logs-reports-export-manage-that-renders-the-adminpanel-component-the-admin-tab-must-only-be-visible-in-the-navigation-when-the-currently-authenticated-user-has-the-admin-role-use-a-shield-or-lock-icon-for-the-tab-non-admin-users-should-not-see-the-tab-in-the-sidebar-tab-bar",
+      "featureTitle": "Add an 'Admin' tab to the root App.tsx tab layout (alongside Flight Entry, Flight Logs, Reports, Export, Manage) that renders the AdminPanel component. The Admin tab must only be visible in the navigation when the currently authenticated user has the 'Admin' role. Use a shield or lock icon for the tab. Non-admin users should not see the tab in the sidebar/tab bar.",
+      "files": [
+        "frontend/src/App.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-40"
       ],
       "confidence": "high"
     }
